@@ -19,6 +19,8 @@ const InterviewCapture: React.FC<Props> = ({
   onFaceFrame,
   onTranscriptUpdate,
   onRecordingChange,
+  onCameraStateChange,
+  onMicStateChange,
   faceIntervalMs = 2000,
   wsEnabled = false,
   wsUrl,
