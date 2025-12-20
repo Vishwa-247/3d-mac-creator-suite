@@ -10,6 +10,8 @@ type Props = {
   wsEnabled?: boolean; // scaffold only, disabled by default
   wsUrl?: string;
   onRecordingChange?: (recording: boolean) => void;
+  onCameraStateChange?: (enabled: boolean) => void;
+  onMicStateChange?: (enabled: boolean) => void;
 };
 
 const InterviewCapture: React.FC<Props> = ({
@@ -52,6 +54,9 @@ const InterviewCapture: React.FC<Props> = ({
         videoRef.current.srcObject = v;
         await videoRef.current.play();
       }
+      // notify initial device states
+      if (typeof onCameraStateChange === 'function') onCameraStateChange(true);
+      if (typeof onMicStateChange === 'function') onMicStateChange(true);
     };
     init().catch(console.error);
     return () => {
@@ -241,6 +246,7 @@ const InterviewCapture: React.FC<Props> = ({
               const next = !micEnabled;
               setMicEnabled(next);
               if (audioStream) audioStream.getAudioTracks().forEach(t => (t.enabled = next));
+              if (typeof onMicStateChange === 'function') onMicStateChange(next);
             } catch {}
           }}
           variant={micEnabled ? 'default' : 'outline'}
@@ -256,6 +262,7 @@ const InterviewCapture: React.FC<Props> = ({
               const next = !camEnabled;
               setCamEnabled(next);
               if (videoStream) videoStream.getVideoTracks().forEach(t => (t.enabled = next));
+              if (typeof onCameraStateChange === 'function') onCameraStateChange(next);
             } catch {}
           }}
           variant={camEnabled ? 'default' : 'outline'}

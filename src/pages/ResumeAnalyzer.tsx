@@ -302,15 +302,15 @@ const ResumeAnalyzer = () => {
               <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
                 <ArrowLeft className="h-4 w-4 mr-2" /> Back
               </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                onClick={() => setShowHistory(!showHistory)}
-                className="flex items-center gap-2"
-              >
-                <History className="h-5 w-5" />
-                {showHistory ? 'Hide History' : 'Show History'}
-              </Button>
+            <Button 
+              variant="outline" 
+              size="lg"
+              onClick={() => setShowHistory(!showHistory)}
+              className="flex items-center gap-2"
+            >
+              <History className="h-5 w-5" />
+              {showHistory ? 'Hide History' : 'Show History'}
+            </Button>
             </div>
           </div>
 

@@ -277,6 +277,24 @@ export default function Auth() {
                   <Mail className="mr-2 h-4 w-4" />
                   Google
                 </Button>
+
+                {/* Demo/Skip Login Button */}
+                <Button
+                  variant="default"
+                  type="button"
+                  className="w-full mt-3 bg-green-600 hover:bg-green-700"
+                  onClick={() => {
+                    // Set demo user in localStorage for components that need user info
+                    localStorage.setItem('demo_user', JSON.stringify({
+                      id: 'demo-user-001',
+                      email: 'demo@studymate.com',
+                      name: 'Demo User'
+                    }));
+                    navigate('/dashboard');
+                  }}
+                >
+                  🚀 Skip Login (Demo Mode)
+                </Button>
               </div>
             </CardContent>
           </Card>

@@ -598,6 +598,7 @@ const MockInterview = () => {
   const [interviewId, setInterviewId] = useState<string>(persisted?.interviewId || "mock-001");
   const [pending, setPending] = useState<any[]>([]);
   const [pendingLoading, setPendingLoading] = useState<boolean>(false);
+  const [isCameraOn, setIsCameraOn] = useState<boolean>(true);
 
   const [metricsData, setMetricsData] = useState({
     facialData: { confident: 0, stressed: 0, nervous: 0 },
@@ -665,10 +666,10 @@ const MockInterview = () => {
     setIsLoading(true);
     try {
       // normalize incoming data
-      let data = dataOrRole;
-      if (typeof dataOrRole === "string" && techStack && experience) {
+    let data = dataOrRole;
+    if (typeof dataOrRole === "string" && techStack && experience) {
         data = { role: dataOrRole, techStack, experience, resumeSummary };
-      }
+    }
 
       // Ensure we have a Gateway token (separate from Supabase token)
       const gatewayToken = await gatewayAuthService.ensureGatewayAuth(session?.user?.email || null);
@@ -723,14 +724,14 @@ const MockInterview = () => {
 
       setInterviewId(result.session_id || `session-${Date.now()}`);
       setQuestions(returnedQuestions);
-      setCurrentQuestionIndex(0);
+    setCurrentQuestionIndex(0);
       toast({ title: "Interview Ready", description: `Generated ${returnedQuestions.length} questions.` });
       setStage(InterviewStage.Recording);
     } catch (e: any) {
       console.error("Question generation failed:", e);
       toast({ title: "Generation failed", description: e?.message || "Please try again.", variant: "destructive" });
     } finally {
-      setIsLoading(false);
+    setIsLoading(false);
     }
   };
 
@@ -920,60 +921,62 @@ const MockInterview = () => {
                 <span className="text-sm text-muted-foreground">
                   Q{currentQuestionIndex + 1} / {questions.length}
                 </span>
-              </CardHeader>
-              <CardContent>
+                </CardHeader>
+                <CardContent>
                 <div className="p-4 bg-muted rounded-md text-lg">
                   {questions[currentQuestionIndex]}
-                </div>
-              </CardContent>
-            </Card>
+                      </div>
+                </CardContent>
+              </Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr_280px] gap-4">
               <div className="space-y-4">
-                <InterviewCapture
+              <InterviewCapture
                   onRecordingChange={(v) => setIsRecording(v)}
+                  onCameraStateChange={(enabled) => setIsCameraOn(enabled)}
+                  onMicStateChange={() => { /* reserved for future mic-dependent UI */ }}
                   onTranscriptUpdate={(text) => setLiveTranscription(text)}
                   wsEnabled={true}
                   wsUrl={"ws://localhost:8002/ws/transcribe"}
-                  onFaceFrame={async (jpegBase64) => {
-                    try {
-                      const res = await fetch('http://localhost:5000/analyze', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ image: jpegBase64 }),
-                      });
-                      if (!res.ok) return;
-                      const data = await res.json();
-                      setMetricsData(prev => ({
-                        ...prev,
-                        facialData: {
+                onFaceFrame={async (jpegBase64) => {
+                  try {
+                    const res = await fetch('http://localhost:5000/analyze', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ image: jpegBase64 }),
+                    });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    setMetricsData(prev => ({
+                      ...prev,
+                      facialData: {
                           confident: (data.metrics?.confident ?? 0),
                           stressed: (data.metrics?.stressed ?? 0),
                           nervous: (data.metrics?.nervous ?? 0),
-                        },
-                        behaviorData: {
-                          blink_count: data.face_tracking?.blink_count ?? 0,
-                          looking_at_camera: !!data.face_tracking?.looking_at_camera,
-                          head_pose: data.face_tracking?.head_pose ?? { pitch: 0, yaw: 0, roll: 0 },
-                        },
-                      }));
-                    } catch (e) {
-                      console.error('Face frame analysis error:', e);
-                    }
-                  }}
-                  onAudioReady={async (blob) => {
-                    try {
-                      const fd = new FormData();
-                      fd.append('audio', blob, 'answer.webm');
-                      fd.append('question_id', String(currentQuestionIndex));
+                      },
+                      behaviorData: {
+                        blink_count: data.face_tracking?.blink_count ?? 0,
+                        looking_at_camera: !!data.face_tracking?.looking_at_camera,
+                        head_pose: data.face_tracking?.head_pose ?? { pitch: 0, yaw: 0, roll: 0 },
+                      },
+                    }));
+                  } catch (e) {
+                    console.error('Face frame analysis error:', e);
+                  }
+                }}
+                onAudioReady={async (blob) => {
+                  try {
+                    const fd = new FormData();
+                    fd.append('audio', blob, 'answer.webm');
+                    fd.append('question_id', String(currentQuestionIndex));
                       // Send facial data if available
                       if (metricsData.facialData) {
                         fd.append('facial_data', JSON.stringify(metricsData.facialData));
                       }
-                      const resp = await fetch(`http://localhost:8000/interviews/${interviewId}/answer`, {
-                        method: 'POST',
-                        body: fd,
-                      });
+                    const resp = await fetch(`http://localhost:8000/interviews/${interviewId}/answer`, {
+                      method: 'POST',
+                      body: fd,
+                    });
                       const data = await resp.json();
                       if (data?.analysis) {
                         setMetricsData(prev => ({
@@ -985,13 +988,13 @@ const MockInterview = () => {
                           }
                         }));
                       }
-                      setRecordingComplete(true);
-                    } catch (err) {
-                      console.error('Submit answer failed:', err);
-                      toast({ title: 'Submission Error', description: 'Please try again.', variant: 'destructive' });
-                    }
-                  }}
-                />
+                    setRecordingComplete(true);
+                  } catch (err) {
+                    console.error('Submit answer failed:', err);
+                    toast({ title: 'Submission Error', description: 'Please try again.', variant: 'destructive' });
+                  }
+                }}
+              />
 
                 <Card className="hidden md:block">
                   <CardHeader>
@@ -1012,29 +1015,29 @@ const MockInterview = () => {
               </div>
 
               <div className="flex lg:justify-end">
-                <MetricsPanel
-                  facialData={metricsData.facialData}
-                  behaviorData={metricsData.behaviorData}
-                  communicationData={metricsData.communicationData}
-                  isVisible={isRecording}
-                />
+              <MetricsPanel
+                facialData={metricsData.facialData}
+                behaviorData={metricsData.behaviorData}
+                communicationData={metricsData.communicationData}
+                isVisible={isRecording && isCameraOn}
+              />
               </div>
             </div>
 
             <div className="mt-2 flex justify-center space-x-4">
-              {recordingComplete ? (
-                <Button
-                  onClick={handleNextQuestion}
-                  className="px-6 py-3 bg-primary text-white rounded-lg flex items-center space-x-2"
-                >
-                  <span>Next Question</span>
-                  <ChevronRight size={16} />
-                </Button>
-              ) : (
-                <Button variant="outline" onClick={handleCancel}>
-                  Cancel
-                </Button>
-              )}
+                {recordingComplete ? (
+                  <Button
+                    onClick={handleNextQuestion}
+                    className="px-6 py-3 bg-primary text-white rounded-lg flex items-center space-x-2"
+                  >
+                    <span>Next Question</span>
+                    <ChevronRight size={16} />
+                  </Button>
+                ) : (
+                  <Button variant="outline" onClick={handleCancel}>
+                    Cancel
+                  </Button>
+                )}
             </div>
           </div>
         );

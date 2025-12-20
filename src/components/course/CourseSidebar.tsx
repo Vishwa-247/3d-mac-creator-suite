@@ -175,9 +175,9 @@ export const CourseSidebar = ({
       {/* Header with collapse button */}
       <div className="p-4 border-b border-border flex items-center justify-between">
         <div className="flex-1">
-          <h3 className="font-semibold text-sm text-muted-foreground mb-2">Course Progress</h3>
-          <Progress value={progress} className="h-2" />
-          <p className="text-xs text-muted-foreground mt-2">{Math.round(progress)}% Complete</p>
+        <h3 className="font-semibold text-sm text-muted-foreground mb-2">Course Progress</h3>
+        <Progress value={progress} className="h-2" />
+        <p className="text-xs text-muted-foreground mt-2">{Math.round(progress)}% Complete</p>
         </div>
         {onToggleCollapse && (
           <Button

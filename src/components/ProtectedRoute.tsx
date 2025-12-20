@@ -8,6 +8,11 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  // BYPASS: Allow access without login for development/demo
+  // To re-enable auth, uncomment the code below
+  return <>{children}</>;
+
+  /* Original auth check - uncomment to re-enable:
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -19,4 +24,5 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   return <>{children}</>;
+  */
 };

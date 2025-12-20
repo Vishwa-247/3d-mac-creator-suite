@@ -214,12 +214,12 @@ const Courses = () => {
           <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
             ← Back
           </Button>
-          <Button asChild>
-            <Link to="/course-generator">
-              <Plus className="w-4 h-4 mr-2" />
-              Create Course
-            </Link>
-          </Button>
+        <Button asChild>
+          <Link to="/course-generator">
+            <Plus className="w-4 h-4 mr-2" />
+            Create Course
+          </Link>
+        </Button>
         </div>
       </div>
 

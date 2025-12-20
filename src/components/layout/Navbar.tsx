@@ -97,24 +97,22 @@ const Navbar = () => {
             <span className="text-gradient">StudyMate</span>
           </Link>
 
-          {/* Desktop Navigation - Only show when user is logged in */}
-          {user && (
-            <nav className="hidden md:flex items-center space-x-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  className={`text-sm font-medium transition-all duration-200 hover:text-primary ${
-                    location.pathname === link.href
-                      ? "text-primary"
-                      : "text-foreground/80"
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
-          )}
+          {/* Desktop Navigation - Always show */}
+          <nav className="hidden md:flex items-center space-x-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.href}
+                className={`text-sm font-medium transition-all duration-200 hover:text-primary ${
+                  location.pathname === link.href
+                    ? "text-primary"
+                    : "text-foreground/80"
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
 
           {/* Auth Buttons - Desktop */}
           <div className="hidden md:flex items-center space-x-4">
@@ -183,23 +181,22 @@ const Navbar = () => {
       {/* Mobile Navigation */}
       {isMenuOpen && (
         <div className="md:hidden fixed inset-x-0 top-[6rem] bg-background/95 backdrop-blur-sm h-screen z-50 p-6 flex flex-col space-y-8 border-t border-border/40">
-          {user && (
-            <nav className="flex flex-col space-y-6">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  className={`text-lg font-medium transition-all duration-200 ${
-                    location.pathname === link.href
-                      ? "text-primary"
-                      : "text-foreground/80"
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
-          )}
+          {/* Mobile Navigation - Always show */}
+          <nav className="flex flex-col space-y-6">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.href}
+                className={`text-lg font-medium transition-all duration-200 ${
+                  location.pathname === link.href
+                    ? "text-primary"
+                    : "text-foreground/80"
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
           <div className="flex flex-col space-y-4 pt-4 border-t border-border">
             {user ? (
               <>

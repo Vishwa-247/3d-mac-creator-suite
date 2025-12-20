@@ -92,3 +92,8 @@ temp/
 *.pkl
 *.joblib
 backend/agents/emotion-detection/models/
+
+# Archives
+*.zip
+*.rar
+*.7z
