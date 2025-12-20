@@ -56,50 +56,45 @@ const CodeBlock = ({ language, value }: { language: string; value: string }) => 
 
 export const ContentRenderer = ({ content }: ContentRendererProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  // Check if content is HTML (starts with < or contains HTML tags)
-  // Also check if it contains HTML tags even if there's text before them
+
   const trimmedContent = content.trim();
-  const isHTML = trimmedContent.startsWith('<') || 
-                  /^<[a-z][\s\S]*>/.test(trimmedContent) ||
-                  /<[a-z]+[^>]*>[\s\S]*<\/[a-z]+>/i.test(trimmedContent);
-  
-  // If content contains HTML tags, extract and render only the HTML part
+  const isHTML =
+    trimmedContent.startsWith('<') ||
+    /^<[a-z][\s\S]*>/.test(trimmedContent) ||
+    /<[a-z]+[^>]*>[\s\S]*<\/[a-z]+>/i.test(trimmedContent);
+
   let htmlContent = trimmedContent;
   if (isHTML && !trimmedContent.startsWith('<')) {
-    // Extract HTML portion (everything from first < to last >)
     const htmlMatch = trimmedContent.match(/<[\s\S]*>/);
     if (htmlMatch) {
       htmlContent = htmlMatch[0];
     }
   }
-  
-  // Add copy buttons to code blocks after rendering
+
   useEffect(() => {
     if (!containerRef.current || !isHTML) return;
-    
+
     const codeBlocks = containerRef.current.querySelectorAll('pre code');
     codeBlocks.forEach((codeElement) => {
       const pre = codeElement.parentElement;
       if (!pre || pre.classList.contains('has-copy-button')) return;
-      
+
       pre.classList.add('has-copy-button', 'relative', 'group');
-      
+
       const copyButton = document.createElement('button');
-      copyButton.className = 'absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-600 text-xs font-medium flex items-center gap-1.5 hover:bg-gray-50 dark:hover:bg-gray-700';
+      copyButton.className =
+        'absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-card px-3 py-1.5 rounded-md border border-border text-xs font-medium flex items-center gap-1.5 hover:bg-muted';
       copyButton.innerHTML = `
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
         </svg>
         <span>Copy</span>
       `;
-      
+
       const codeText = codeElement.textContent || '';
-      let copied = false;
-      
+
       copyButton.addEventListener('click', async () => {
         await navigator.clipboard.writeText(codeText);
-        copied = true;
         copyButton.innerHTML = `
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -107,7 +102,6 @@ export const ContentRenderer = ({ content }: ContentRendererProps) => {
           <span>Copied</span>
         `;
         setTimeout(() => {
-          copied = false;
           copyButton.innerHTML = `
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
@@ -116,25 +110,23 @@ export const ContentRenderer = ({ content }: ContentRendererProps) => {
           `;
         }, 2000);
       });
-      
+
       pre.appendChild(copyButton);
     });
   }, [content, isHTML]);
-  
+
   if (isHTML) {
-    // Render HTML directly with proper styling
     return (
-      <div 
+      <div
         ref={containerRef}
-        className="prose prose-slate dark:prose-invert max-w-none"
+        className="max-w-none leading-relaxed space-y-4 text-foreground"
         dangerouslySetInnerHTML={{ __html: htmlContent }}
       />
     );
   }
-  
-  // Fallback to markdown for old content
+
   return (
-    <div className="prose prose-slate dark:prose-invert max-w-none">
+    <div className="max-w-none leading-relaxed space-y-4 text-foreground">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -142,7 +134,7 @@ export const ContentRenderer = ({ content }: ContentRendererProps) => {
             const match = /language-(\w+)/.exec(className || '');
             const value = String(children).replace(/\n$/, '');
             const inline = !match;
-            
+
             return !inline && match ? (
               <CodeBlock language={match[1]} value={value} />
             ) : (
@@ -152,7 +144,6 @@ export const ContentRenderer = ({ content }: ContentRendererProps) => {
             );
           },
           img({ src, alt }) {
-            // Handle placeholder images
             if (src === 'placeholder') {
               return (
                 <div className="my-6 p-8 bg-muted rounded-lg border-2 border-dashed border-border flex items-center justify-center text-center">
@@ -181,9 +172,7 @@ export const ContentRenderer = ({ content }: ContentRendererProps) => {
           },
           td({ children }) {
             return (
-              <td className="border border-border px-4 py-2">
-                {children}
-              </td>
+              <td className="border border-border px-4 py-2">{children}</td>
             );
           },
           h1({ children }) {
