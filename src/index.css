@@ -130,7 +130,7 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    /* font-feature-settings intentionally simplified to avoid lint parsing issues */
   }
 
   /* Custom Scrollbar */
@@ -170,7 +170,7 @@
   }
 
   .button-glow:hover {
-    box-shadow: 0 0 20px 5px hsl(var(--primary) / 0.35);
+    box-shadow: 0 0 20px 5px hsl(var(--primary));
     transition: all 0.3s ease;
   }
 
@@ -340,117 +340,7 @@ h5 {
 }
 
 /* ============================================
-   MAC-STYLE CODE BLOCKS - White Background
-   ============================================ */
-
-/* Code block container - Mac style */
-.prose pre {
-  @apply rounded-xl my-6 shadow-lg overflow-hidden;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  position: relative;
-}
-
-/* Mac-style header with traffic lights */
-.prose pre::before {
-  content: '';
-  display: block;
-  height: 36px;
-  background: linear-gradient(to bottom, #f9fafb 0%, #f3f4f6 100%);
-  border-bottom: 1px solid #e5e7eb;
-  background-image: 
-    radial-gradient(circle, #ff5f56 6px, transparent 6px),
-    radial-gradient(circle, #ffbd2e 6px, transparent 6px),
-    radial-gradient(circle, #27c93f 6px, transparent 6px);
-  background-position: 12px 12px, 32px 12px, 52px 12px;
-  background-repeat: no-repeat;
-  background-size: 12px 12px;
-}
-
-.prose pre code {
-  @apply text-sm font-mono leading-relaxed block p-6;
-  color: #1f2937; /* dark gray text */
-  background: transparent;
-  white-space: pre;
-  overflow-x: auto;
-}
-
-/* Dark mode - keep same Mac style but darker */
-.dark .prose pre {
-  background: #1e293b;
-  border-color: #334155;
-}
-
-.dark .prose pre::before {
-  background: linear-gradient(to bottom, #1e293b 0%, #0f172a 100%);
-  border-bottom-color: #334155;
-}
-
-.dark .prose pre code {
-  color: #e2e8f0; /* light gray text */
-}
-
-/* Inline code */
-.prose code:not(pre code) {
-  @apply bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-sm font-mono;
-  color: #c084fc;
-}
-
-/* Syntax highlighting colors for code */
-.prose pre code .token.comment,
-.prose pre code .comment {
-  color: #6b7280;
-}
-
-.prose pre code .token.keyword,
-.prose pre code .keyword {
-  color: #c084fc;
-  font-weight: 600;
-}
-
-.prose pre code .token.string,
-.prose pre code .string {
-  color: #34d399;
-}
-
-.prose pre code .token.function,
-.prose pre code .function {
-  color: #60a5fa;
-}
-
-.prose pre code .token.number,
-.prose pre code .number {
-  color: #fb923c;
-}
-
-.prose pre code .token.operator,
-.prose pre code .operator {
-  color: #f472b6;
-}
-
-/* Tables */
-.prose table {
-  @apply w-full border-collapse my-6 shadow-md rounded-lg overflow-hidden;
-}
-
-.prose th {
-  @apply border border-border bg-muted px-4 py-3 text-left font-semibold;
-}
-
-.prose td {
-  @apply border border-border px-4 py-3;
-}
-
-.prose tbody tr:hover {
-  @apply bg-muted/50 transition-colors;
-}
-
-/* ============================================
    QUIZ STYLING - Correct/Wrong Colors
-   ============================================ */
-
-/* ============================================
-   QUIZ ANSWER HIGHLIGHTING - Fixed Colors
    ============================================ */
 
 .quiz-option-correct {
