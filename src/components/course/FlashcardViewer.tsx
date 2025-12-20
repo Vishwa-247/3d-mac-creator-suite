@@ -97,7 +97,7 @@ export const FlashcardViewer = ({ flashcards, onMarkLearned }: FlashcardViewerPr
               'absolute inset-0 p-8 flex items-center justify-center text-center',
               '[backface-visibility:hidden]',
               'border-2',
-              isLearned && 'border-green-500'
+              isLearned && 'border-primary'
             )}
           >
             <div>
@@ -118,7 +118,7 @@ export const FlashcardViewer = ({ flashcards, onMarkLearned }: FlashcardViewerPr
               '[backface-visibility:hidden]',
               '[transform:rotateY(180deg)]',
               'border-2',
-              isLearned && 'border-green-500'
+              isLearned && 'border-primary'
             )}
           >
             <div>
