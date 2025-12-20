@@ -36,23 +36,21 @@ export const InteractiveQuiz = ({ questions, onComplete }: InteractiveQuizProps)
 
   const handleSubmit = () => {
     if (!selectedAnswer || showResult) return;
-    
     setShowResult(true);
-    
+
     if (selectedAnswer === currentQuestion.correct_answer) {
-      setScore(prev => prev + 1);
+      setScore((prev) => prev + 1);
     }
-    
-    setAnsweredQuestions(prev => new Set(prev).add(currentIndex));
+
+    setAnsweredQuestions((prev) => new Set(prev).add(currentIndex));
   };
 
   const handleNext = () => {
     if (currentIndex < questions.length - 1) {
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex((prev) => prev + 1);
       setSelectedAnswer(null);
       setShowResult(false);
     } else {
-      // Quiz complete
       if (onComplete) {
         onComplete(score);
       }
@@ -88,30 +86,24 @@ export const InteractiveQuiz = ({ questions, onComplete }: InteractiveQuizProps)
       </div>
 
       <div className="space-y-6">
-        <h3 className="text-xl font-semibold">{currentQuestion.question}</h3>
+        <h3 className="text-xl font-semibold leading-snug">{currentQuestion.question}</h3>
 
         <div className="space-y-3">
           {currentQuestion.options.map((option, index) => {
             const isSelected = selectedAnswer === option;
             const isCorrectAnswer = option === currentQuestion.correct_answer;
-            // Show wrong answer as red if user selected it AND it's wrong
             const isWrongAnswer = showResult && isSelected && !isCorrectAnswer;
-            
-            let variantClass = 'border-2 border-border hover:bg-secondary/50';
-            
+
+            let variantClass = 'border-2 border-border bg-card hover:bg-muted/70';
+
             if (showResult) {
-              // Always show correct answer in green
               if (isCorrectAnswer) {
-                variantClass = 'quiz-option-correct';
-              } 
-              // Show wrong selected answer in red
-              else if (isWrongAnswer) {
-                variantClass = 'quiz-option-incorrect';
+                variantClass = 'border-2 border-primary bg-primary/10 text-foreground';
+              } else if (isWrongAnswer) {
+                variantClass = 'border-2 border-destructive bg-destructive/10 text-destructive';
               }
-              // Other options remain default when result is shown
             } else if (isSelected) {
-              // Before submit, show selected option
-              variantClass = 'border-2 border-primary bg-primary/5';
+              variantClass = 'border-2 border-primary bg-primary/10';
             }
 
             return (
@@ -125,17 +117,15 @@ export const InteractiveQuiz = ({ questions, onComplete }: InteractiveQuizProps)
                   !showResult && 'cursor-pointer'
                 )}
               >
-                <div className="flex items-center justify-between">
-                  <span>{option}</span>
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-sm leading-relaxed">{option}</span>
                   {showResult && (
                     <>
-                      {/* Always show checkmark for correct answer */}
                       {isCorrectAnswer && (
-                        <CheckCircle2 className="h-5 w-5 text-green-600" />
+                        <CheckCircle2 className="h-5 w-5 text-primary" />
                       )}
-                      {/* Show X only for wrong selected answer */}
                       {isWrongAnswer && (
-                        <XCircle className="h-5 w-5 text-red-600" />
+                        <XCircle className="h-5 w-5 text-destructive" />
                       )}
                     </>
                   )}
@@ -148,7 +138,9 @@ export const InteractiveQuiz = ({ questions, onComplete }: InteractiveQuizProps)
         {showResult && currentQuestion.explanation && (
           <div className="p-4 bg-muted rounded-lg">
             <p className="text-sm font-medium mb-1">Explanation:</p>
-            <p className="text-sm text-muted-foreground">{currentQuestion.explanation}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {currentQuestion.explanation}
+            </p>
           </div>
         )}
 
@@ -162,10 +154,7 @@ export const InteractiveQuiz = ({ questions, onComplete }: InteractiveQuizProps)
               Submit Answer
             </Button>
           ) : (
-            <Button
-              onClick={handleNext}
-              className="flex-1"
-            >
+            <Button onClick={handleNext} className="flex-1">
               {currentIndex < questions.length - 1 ? (
                 <>
                   Next Question
