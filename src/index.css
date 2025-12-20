@@ -344,13 +344,11 @@ h5 {
    ============================================ */
 
 .quiz-option-correct {
-  @apply border-2 bg-green-50 text-green-900 dark:bg-green-950 dark:text-green-100 font-medium;
-  border-color: #22c55e !important; /* force green-500 */
+  @apply border-2 bg-green-50 text-green-900 dark:bg-green-950 dark:text-green-100 font-medium border-green-500;
 }
 
 .quiz-option-incorrect {
-  @apply border-2 bg-red-50 text-red-900 dark:bg-red-950 dark:text-red-100;
-  border-color: #ef4444 !important; /* force red-500 */
+  @apply border-2 bg-red-50 text-red-900 dark:bg-red-950 dark:text-red-100 border-red-500;
 }
 
 /* ============================================
