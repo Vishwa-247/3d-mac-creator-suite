@@ -25,7 +25,7 @@ const Hero = () => {
               AI-Powered Learning & Interview Preparation
             </span>
             
-            <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl animate-fade-up" style={{ animationDelay: "150ms" }}>
+            <h1 className="font-serif text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl animate-fade-up" style={{ animationDelay: "150ms" }}>
               Master Any <span className="text-gradient">Interview</span> with AI-Guided Learning
             </h1>
             

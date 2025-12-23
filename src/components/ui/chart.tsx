@@ -353,6 +353,14 @@ function getPayloadConfigFromPayload(
     : config[key as keyof typeof config]
 }
 
+export const chartColorTokens = {
+  primary: "hsl(var(--primary))",
+  accent: "hsl(var(--accent))",
+  muted: "hsl(var(--muted))",
+  destructive: "hsl(var(--destructive))",
+  background: "hsl(var(--background))",
+} as const;
+
 export {
   ChartContainer,
   ChartTooltip,
