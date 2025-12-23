@@ -15,6 +15,7 @@ import { dsaTopics } from "@/data/dsaProblems";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import GlassMorphism from "@/components/ui/GlassMorphism";
 import {
   Activity,
   ArrowRight,
@@ -28,6 +29,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -309,35 +311,31 @@ const Dashboard = () => {
   return (
     <Container>
       <div className="py-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              StudyMate Dashboard
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Track your learning progress and interview performance
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
-              ← Back
-            </Button>
-            <Button asChild>
-              <Link to="/profile-builder">Build Profile</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link to="/mock-interview">AI Interview Coach</Link>
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setShowChatbot(!showChatbot)}
-              className="flex items-center gap-1"
-            >
-              <MessageSquare size={16} />
-              <span>Help</span>
-            </Button>
-          </div>
-        </div>
+        <PageHeader
+          title="StudyMate Dashboard"
+          description="Track your learning progress and interview performance"
+          actions={
+            <>
+              <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
+                ← Back
+              </Button>
+              <Button asChild>
+                <Link to="/profile-builder">Build Profile</Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/mock-interview">AI Interview Coach</Link>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowChatbot(!showChatbot)}
+                className="flex items-center gap-1"
+              >
+                <MessageSquare size={16} />
+                <span>Help</span>
+              </Button>
+            </>
+          }
+        />
 
         {showChatbot && (
           <div className="mb-8">
@@ -360,85 +358,73 @@ const Dashboard = () => {
 
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+              <GlassMorphism className="flex flex-col justify-between p-6">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-2">
                     Profile Progress
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center">
-                    <User className="mr-2 h-4 w-4 text-primary" />
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-primary" />
                     <div className="text-2xl font-bold">
                       {userProfile?.completion_percentage || 0}%
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </GlassMorphism>
 
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+              <GlassMorphism className="flex flex-col justify-between p-6">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-2">
                     Generated Courses
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center">
-                    <BookOpen className="mr-2 h-4 w-4 text-primary" />
-                    <div className="text-2xl font-bold">
-                      {courseStats.total}
-                    </div>
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-primary" />
+                    <div className="text-2xl font-bold">{courseStats.total}</div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </GlassMorphism>
 
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+              <GlassMorphism className="flex flex-col justify-between p-6">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-2">
                     AI Interviews
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center">
-                    <Video className="mr-2 h-4 w-4 text-primary" />
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Video className="h-4 w-4 text-primary" />
                     <div className="text-2xl font-bold">
                       {displayInterviews.length}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </GlassMorphism>
 
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+              <GlassMorphism className="flex flex-col justify-between p-6">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-2">
                     Profile Strength
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center">
-                    <Medal className="mr-2 h-4 w-4 text-primary" />
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Medal className="h-4 w-4 text-primary" />
                     <div className="text-2xl font-bold">
                       {userProfile?.profile_strength_score || 0}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </GlassMorphism>
 
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+              <GlassMorphism className="flex flex-col justify-between p-6">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-2">
                     DSA Problems
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center">
-                    <Code className="mr-2 h-4 w-4 text-primary" />
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Code className="h-4 w-4 text-primary" />
                     <div className="text-2xl font-bold">
                       {realDSAData.solvedProblems}/{totalAllDSAProblems}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </GlassMorphism>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -84,7 +84,7 @@ export const EnhancedAnalysisResults: React.FC<EnhancedAnalysisResultsProps> = (
               {icon}
             </div>
             <h3 
-              className="font-semibold text-foreground text-sm sm:text-base truncate cursor-help" 
+              className="font-serif font-semibold text-foreground text-sm sm:text-base truncate cursor-help" 
               title={title}
             >
               {title}
@@ -186,7 +186,7 @@ export const EnhancedAnalysisResults: React.FC<EnhancedAnalysisResultsProps> = (
                 <div className="space-y-4">
                   {/* Categories Breakdown */}
                   <div>
-                    <h4 className="font-semibold mb-2">Categories Found:</h4>
+                    <h4 className="font-serif font-semibold mb-2">Categories Found:</h4>
                     <div className="flex flex-wrap gap-2">
                       {Object.entries(analysisData.action_verb_analysis.categories).map(([category, count]) => (
                         <Badge key={category} variant="outline">
@@ -198,7 +198,7 @@ export const EnhancedAnalysisResults: React.FC<EnhancedAnalysisResultsProps> = (
 
                   {/* Strong Verbs Found */}
                   <div>
-                    <h4 className="font-semibold mb-2">Strong Action Verbs Found:</h4>
+                    <h4 className="font-serif font-semibold mb-2">Strong Action Verbs Found:</h4>
                     <ScrollArea className="h-32 max-w-full overflow-hidden">
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-w-full">
                         {analysisData.action_verb_analysis.found_verbs
@@ -214,7 +214,7 @@ export const EnhancedAnalysisResults: React.FC<EnhancedAnalysisResultsProps> = (
 
                   {/* Recommendations */}
                   <div>
-                    <h4 className="font-semibold mb-2">Recommendations:</h4>
+                    <h4 className="font-serif font-semibold mb-2">Recommendations:</h4>
                     <ul className="space-y-1">
                       {analysisData.action_verb_analysis.recommendations.map((rec, index) => (
                         <li key={index} className="flex items-start gap-2 text-sm">
@@ -247,7 +247,7 @@ export const EnhancedAnalysisResults: React.FC<EnhancedAnalysisResultsProps> = (
                   {/* Bullet Points Analysis */}
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-semibold">Bullet Points Analysis:</h4>
+                      <h4 className="font-serif font-semibold">Bullet Points Analysis:</h4>
                       <Badge variant="outline" className="text-xs">
                         Scroll to view all →
                       </Badge>
@@ -293,7 +293,7 @@ export const EnhancedAnalysisResults: React.FC<EnhancedAnalysisResultsProps> = (
 
                   {/* STAR Recommendations */}
                   <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200">
-                    <h4 className="font-semibold mb-3 text-blue-900 dark:text-blue-400">Overall STAR Recommendations:</h4>
+                    <h4 className="font-serif font-semibold mb-3 text-blue-900 dark:text-blue-400">Overall STAR Recommendations:</h4>
                     <ul className="space-y-2">
                       {analysisData.star_analysis.recommendations.map((rec, index) => (
                         <li key={index} className="flex items-start gap-2 text-sm text-blue-800 dark:text-blue-300">
@@ -308,7 +308,7 @@ export const EnhancedAnalysisResults: React.FC<EnhancedAnalysisResultsProps> = (
                   <div className="mt-6 p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border-2 border-green-300">
                     <div className="flex items-center gap-2 mb-3">
                       <Star className="h-5 w-5 text-green-600" />
-                      <h4 className="font-semibold text-green-900 dark:text-green-300">Perfect STAR Example (100% Score)</h4>
+                      <h4 className="font-serif font-semibold text-green-900 dark:text-green-300">Perfect STAR Example (100% Score)</h4>
                     </div>
                     <div className="space-y-3 text-sm">
                       <div className="p-3 bg-white dark:bg-green-900/10 rounded border border-green-200">

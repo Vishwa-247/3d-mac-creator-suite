@@ -258,7 +258,7 @@ const ResumeAnalyzer = () => {
                   <Brain className="h-10 w-10 text-primary" />
                   <Sparkles className="h-4 w-4 text-primary absolute -top-1 -right-1 animate-pulse" />
                 </div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-serif font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                   Resume Analyzer
                 </h1>
               </div>

@@ -249,6 +249,9 @@ const DSAChatbot: React.FC<DSAChatbotProps> = ({
                       {message.isBot ? (
                         <ReactMarkdown
                           components={{
+                            h1: ({ children }) => <h1 className="text-xl font-serif font-bold mb-2 break-words">{children}</h1>,
+                            h2: ({ children }) => <h2 className="text-lg font-serif font-bold mb-2 break-words">{children}</h2>,
+                            h3: ({ children }) => <h3 className="text-base font-serif font-semibold mb-1 break-words">{children}</h3>,
                             p: ({ children }) => <p className="mb-2 last:mb-0 break-words">{children}</p>,
                             ul: ({ children }) => <ul className="list-disc list-inside mb-2 break-words">{children}</ul>,
                             ol: ({ children }) => <ol className="list-decimal list-inside mb-2 break-words">{children}</ol>,
