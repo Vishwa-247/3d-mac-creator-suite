@@ -1,47 +1,40 @@
 # Agentic Architecture Migration - Task Breakdown
 
-## Phase 1: Architecture Planning & Design
-- [x] Review existing system architecture and dependencies
-- [x] Design MongoDB schema migration from Supabase
-- [x] Plan free tool alternatives for paid services
-- [x] Design AI model optimization strategy
-- [x] **Create Master Architecture Document for Team Presentation**
+## Phase 0: Align with Existing Theme & Structure
+- [x] **Frontend**: Fix build errors in index.css
+- [x] **Frontend**: Update theme tokens (colors, fonts, radius)
+- [x] **Frontend**: Expand DSA problems list (Netflix, Atlassian)
+- [x] **Plan**: Define Hybrid Workflow (Lovable + Cursor + GitHub)
 
-## Phase 2: Database Migration Strategy
-- [ ] MongoDB Atlas free tier setup (512MB storage)
-- [ ] Design collections schema
-- [ ] Plan data migration from Supabase to MongoDB
-- [ ] Design vector storage strategy for agent memory
+## Phase 1: Data & Memory Foundation
+- [ ] **Backend**: Set up MongoDB Atlas (Free Tier)
+- [ ] **Backend**: Create collections (users, agent_memory, courses, etc.)
+- [ ] **Backend**: Implement FastAPI data layer & vector search
 
-## Phase 3: Free Tools Integration
-- [ ] Identify and evaluate free AI model alternatives
-- [ ] Plan Groq/Gemini Flash integration for speed
-- [ ] Design local model fallback strategy
-- [ ] Plan Judge0 alternative for code execution
+## Phase 2: Onboarding Agent (The Architect)
+- [x] **Spec**: Onboarding Agent (01_agent_onboarding.md)
+- [ ] **Backend**: Implement POST /api/onboarding/chat (Groq)
+- [ ] **Backend**: Implement POST /api/onboarding/complete
+- [ ] **Frontend**: Build Chat Interface (Lovable)
 
-## Phase 4: Interview Module ML Design
-- [x] Design emotion detection integration
-- [x] Plan speech-to-text implementation
-- [x] Design interview scoring algorithm
-- [x] Plan real-time feedback system
-- [x] Design MediaPipe Gaze & Pose pipeline
-- [x] Define "Metric Mapping" logic (Signals -> Confidence)
+## Phase 3: Resume Agent (Recruiter-in-a-Box)
+- [x] **Spec**: Resume Agent (02_agent_resume.md)
+- [ ] **Backend**: Implement POST /api/resume/analyze (Groq + PDF Parsing)
+- [ ] **Frontend**: Wire Resume Analyzer Page to Backend
 
-## Phase 5: Agentic Features Implementation
-- [x] **Spec: Onboarding Agent (01)**
-- [x] **Spec: Resume Agent (02)**
-- [ ] **Spec: Course Agent (03)**
-- [ ] **Spec: DSA Agent (04)**
-- [ ] **Spec: Interview Agent (05)**
-- [ ] **Spec: Job Agent (06)**
-- [ ] **Spec: Accountability Agent (07)**
-- [ ] Design event-driven orchestrator
-- [ ] Plan agent memory system
-- [ ] Design adaptive learning paths
-- [ ] Plan accountability agent
+## Phase 4: Course Agent (Adaptive Courses)
+- [x] **Spec**: Course Agent (03_agent_course.md)
+- [ ] **Backend**: Implement Course Generation (Gemini Flash)
+- [ ] **Backend**: Implement "Remediation" Logic (Quiz Fail -> New Chapter)
+- [ ] **Frontend**: Update CourseLayout & Quiz Components
 
-## Phase 6: Performance Optimization
-- [ ] Design caching strategy
-- [ ] Plan API rate limiting
-- [ ] Design background job processing
-- [ ] Plan response time optimization
+## Phase 5: Interview Agent (ML + Real-Time)
+- [x] **Design**: Deep Dive ML Architecture (interview_ml_deep_dive.md)
+- [ ] **Spec**: Interview Agent (05_agent_interview.md)
+- [ ] **Backend**: Train/Self-host Emotion Models (Mini-Xception, Whisper)
+- [ ] **Frontend**: Integrate Webcam & Audio Capture
+
+## Phase 6: Accountability & Career Tracker
+- [ ] **Spec**: Accountability Agent (07_agent_accountability.md)
+- [ ] **Backend**: Build Event Orchestrator (Redis)
+- [ ] **Frontend**: Build Dashboard & Career Gauge
