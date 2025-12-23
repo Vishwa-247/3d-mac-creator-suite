@@ -11387,4 +11387,120 @@ export const companies: Company[] = [
       },
     ],
   },
+  {
+    id: "netflix",
+    title: "Netflix",
+    icon: "🍿",
+    links: [
+      { label: "Careers", url: "https://jobs.netflix.com/" },
+      { label: "LeetCode Discuss", url: "https://leetcode.com/company/netflix/" },
+    ],
+    totalProblems: 10,
+    solvedProblems: 0,
+    problems: [
+      {
+        name: "Group Anagrams",
+        url: "https://leetcode.com/problems/group-anagrams",
+        difficulty: "Medium",
+      },
+      {
+        name: "LRU Cache",
+        url: "https://leetcode.com/problems/lru-cache",
+        difficulty: "Medium",
+      },
+      {
+        name: "Merge Intervals",
+        url: "https://leetcode.com/problems/merge-intervals",
+        difficulty: "Medium",
+      },
+      {
+        name: "Two Sum",
+        url: "https://leetcode.com/problems/two-sum",
+        difficulty: "Easy",
+      },
+      {
+        name: "Median of Two Sorted Arrays",
+        url: "https://leetcode.com/problems/median-of-two-sorted-arrays",
+        difficulty: "Hard",
+      },
+       {
+        name: "Word Search",
+        url: "https://leetcode.com/problems/word-search",
+        difficulty: "Medium",
+      },
+      {
+        name: "Trapping Rain Water",
+        url: "https://leetcode.com/problems/trapping-rain-water",
+        difficulty: "Hard",
+      },
+       {
+        name: "Best Time to Buy and Sell Stock",
+        url: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock",
+        difficulty: "Easy",
+      },
+       {
+        name: "Valid Parentheses",
+        url: "https://leetcode.com/problems/valid-parentheses",
+        difficulty: "Easy",
+      },
+       {
+        name: "Serialize and Deserialize Binary Tree",
+        url: "https://leetcode.com/problems/serialize-and-deserialize-binary-tree",
+        difficulty: "Hard",
+      },
+    ],
+  },
+  {
+    id: "atlassian",
+    title: "Atlassian",
+    icon: "🌏",
+    links: [
+      { label: "Careers", url: "https://www.atlassian.com/company/careers" },
+      { label: "LeetCode Discuss", url: "https://leetcode.com/company/atlassian/" },
+    ],
+    totalProblems: 8,
+    solvedProblems: 0,
+    problems: [
+      {
+        name: "Rank Teams by Votes",
+        url: "https://leetcode.com/problems/rank-teams-by-votes",
+        difficulty: "Medium",
+      },
+      {
+        name: "Time Based Key-Value Store",
+        url: "https://leetcode.com/problems/time-based-key-value-store",
+        difficulty: "Medium",
+      },
+      {
+        name: "Logger Rate Limiter",
+        url: "https://leetcode.com/problems/logger-rate-limiter",
+        difficulty: "Easy",
+      },
+      {
+        name: "Design Snake Game",
+        url: "https://leetcode.com/problems/design-snake-game",
+        difficulty: "Medium",
+      },
+      {
+        name: "Find the City With the Smallest Number of Neighbors at a Threshold Distance",
+        url: "https://leetcode.com/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance",
+        difficulty: "Medium",
+      },
+      {
+         name: "Count Words Obtained After Adding a Letter",
+         url: "https://leetcode.com/problems/count-words-obtained-after-adding-a-letter",
+         difficulty: "Medium",
+      },
+       {
+        name: "Maximum Frequency Stack",
+        url: "https://leetcode.com/problems/maximum-frequency-stack",
+        difficulty: "Hard",
+      },
+       {
+        name: "Course Schedule II",
+        url: "https://leetcode.com/problems/course-schedule-ii",
+        difficulty: "Medium",
+      },
+    ],
+  },
 ];
