@@ -96,7 +96,7 @@ const Index = () => {
 
         <Container>
           <div className="max-w-3xl mx-auto text-center mb-12">
-            <h1 className="text-gradient animate-fade-in font-bold mb-6">
+            <h1 className="font-serif text-gradient animate-fade-in font-bold mb-6">
               StudyMate: AI-Powered Career Development Platform
             </h1>
             <p className="text-xl text-muted-foreground animate-fade-up mb-8">
@@ -127,7 +127,7 @@ const Index = () => {
 
         <Container>
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Our Platform</h2>
+            <h2 className="font-serif text-3xl font-bold mb-4">Our Platform</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Explore our core features designed to enhance your learning and interview preparation experience.
             </p>
@@ -236,7 +236,7 @@ const Index = () => {
 
         <Container>
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Platform Features</h2>
+            <h2 className="font-serif text-3xl font-bold mb-4">Platform Features</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Our AI-powered platform offers everything you need to prepare for interviews and learn new skills
               efficiently.
