@@ -8,6 +8,7 @@ interface LayoutProps {
   className?: string;
   withNavbar?: boolean;
   withFooter?: boolean;
+  noPadding?: boolean;
 }
 
 export default function Layout({
@@ -15,11 +16,12 @@ export default function Layout({
   className,
   withNavbar = true,
   withFooter = false,
+  noPadding = false,
 }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col">
       {withNavbar && <Navbar />}
-      <main className={cn("flex-1 pt-28", className)}>
+      <main className={cn("flex-1", !noPadding && "pt-28", className)}>
         {children}
       </main>
       {withFooter && (

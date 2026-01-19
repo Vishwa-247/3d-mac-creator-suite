@@ -58,6 +58,12 @@ timeout /t 2 /nobreak >nul
 start "Emotion Detection - Port 5000" cmd /k "cd /d %~dp0 && venv\Scripts\activate && cd agents\emotion-detection && python main.py"
 timeout /t 2 /nobreak >nul
 
+start "Evaluator - Port 8010" cmd /k "cd /d %~dp0 && venv\Scripts\activate && cd evaluator && python -m uvicorn main:app --host 0.0.0.0 --port 8010 --reload"
+timeout /t 2 /nobreak >nul
+
+start "Orchestrator - Port 8011" cmd /k "cd /d %~dp0 && venv\Scripts\activate && cd orchestrator && python -m uvicorn main:app --host 0.0.0.0 --port 8011 --reload"
+timeout /t 2 /nobreak >nul
+
 echo.
 echo ✅ All services started successfully!
 echo.
@@ -70,6 +76,8 @@ echo    - Course Generation:   http://localhost:8008
 echo    - Interview Coach:     http://localhost:8002
 echo    - Unified DSA Service: http://localhost:8004 (Progress + AI Feedback + Chatbot)
 echo    - Emotion Detection:   http://localhost:5000
+echo    - Evaluator:           http://localhost:8010 (NEW - LLM Scoring)
+echo    - Orchestrator:        http://localhost:8011 (NEW - Rule-based Routing)
 echo.
 echo 📖 API Documentation: http://localhost:8000/docs
 echo.

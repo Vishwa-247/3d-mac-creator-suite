@@ -1,168 +1,47 @@
+# Studymate - Agentic Career Platform
 
-# StudyMate AI Learning Platform
+> **Status:** MVP Implementation / Redesign Phase
+> **Target:** Production-Grade Agentic Learning Platform (Lovable)
 
-An AI-powered learning platform with course generation, flashcards, quizzes, mock interview preparation, and AI-powered resume analysis.
+## Current Project (What's Here Now)
 
-## Environment Setup
+This repository currently contains the **Core Foundation and UI/UX Architecture** for Studymate. It is a functional MVP designed with a premium SaaS aesthetic.
 
-This application requires the following environment variables:
+### ✅ Built Features
+- **Modern SaaS UI:** Redesigned Landing Page, Auth flow, and Dashboard inspired by high-end engineering tools.
+- **Interactive Demos:** Built-in simulations for `System Flow`, `Terminal Interviews`, `DSA Visualizers`, and `Project Studio`.
+- **Learning Infrastructure:**
+  - **DSASheet:** Topic-wise tracking for algorithms.
+  - **Mock Interviews:** Interface for AI-driven interview simulation.
+  - **Course Generator:** Structure for dynamic, scenario-based learning.
+  - **Resume Analyzer:** Module for profile evaluation.
+- **Unified Branding:** Consistent branding with the "Studymate" identity and custom Brain logo.
 
+---
+
+## The Vision (What We Are Making)
+
+We are pushing this to Lovable to transform these interactive components into a **fully agentic ecosystem**. We are moving away from "passive content" to "production-grade thinking."
+
+### 🚀 Future Roadmap
+1. **Agent Orchestrator (The Brain):** Implementing the central logic that tracks user weaknesses and *controls* the learning path, rather than just offering a list.
+2. **True Interactive Course Generation:** Lessons that don't just show text, but force users to make architectual decisions and handle "failure injections."
+3. **Multi-Agent Project Studio:** Turning the demo into a real workflow where a team of AI agents (Idea Analyst, System Design, UI/UX) collaborate with the user.
+4. **Production-Logic Interviews:** Moving beyond simple Q&A to simulations that test clarification habits, scale awareness, and adaptability.
+5. **Real-time Feedback Loop:** Adaptive career state updates that replan the user's next action based on every interaction.
+
+---
+
+## Tech Stack
+- **Frontend:** React, TypeScript, Tailwind CSS
+- **Backend/AI:** Supabase, Edge Functions, OpenAI GPT-4, Gemini
+- **Design:** Minimalist, High-Performance, Production-Ready
+
+## Quick Start
+```bash
+npm install
+cp .env.example .env
+npm run dev
 ```
-VITE_GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_API_KEY=AIzaSyBr964zVyQutiRjAUId0l767TyfaAiPEuE
-```
 
-### Getting a Gemini API Key
-
-1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Create an API key
-3. Copy the API key and paste it into your `.env` file as `VITE_GEMINI_API_KEY`
-
-## Running the Application
-
-### Backend Setup (FastAPI + MongoDB)
-
-#### Option 1: Quick Setup (Recommended)
-
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-
-2. Run the setup script:
-   
-   **Linux/macOS:**
-   ```bash
-   chmod +x setup.sh
-   ./setup.sh
-   ```
-   
-   **Windows:**
-   ```cmd
-   setup.bat
-   ```
-
-#### Option 2: Manual Setup
-
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-
-2. Make sure you have Docker and Docker Compose installed
-
-3. Start the backend services:
-   ```bash
-   docker-compose up --build
-   ```
-
-   This will start:
-   - **API Gateway** on port 8000
-   - **Resume Analyzer Agent** on port 8001
-   - **Course Generation Agent** on port 8002
-   - **Interview Coach Agent** on port 8003
-   - **Chat Mentor Agent** on port 8004
-   - **Progress Analyst Agent** on port 8005
-   - **MongoDB** on port 27017
-
-4. The backend will be available at `http://localhost:8000`
-
-### Frontend Setup
-
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Create a `.env` file in the root directory and add your Gemini API key:
-   ```
-   VITE_GEMINI_API_KEY=your_gemini_api_key_here
-   ```
-3. Start the frontend application:
-   ```bash
-   npm run dev
-   ```
-
-## Backend Architecture
-
-The backend is built with **FastAPI** and uses a microservices architecture:
-
-### Services:
-- **API Gateway** (port 8000): Main entry point, routes requests to appropriate agents
-- **Resume Analyzer** (port 8001): AI-powered resume parsing and analysis using Gemini API
-- **Course Generation** (port 8002): Generates personalized courses
-- **Interview Coach** (port 8003): Mock interview preparation
-- **Chat Mentor** (port 8004): AI-powered chat assistance
-- **Progress Analyst** (port 8005): Learning progress tracking
-
-### Database:
-- **MongoDB**: Stores user profiles, resume data, courses, and analytics
-- **Collections**: users, profiles, resumes, courses, interviews, chat_sessions
-
-### Key Features:
-- **Resume Upload & Analysis**: PDF/DOCX parsing with AI-powered insights
-- **Profile Auto-Population**: Automatically fills profile from resume data
-- **Job-Specific Analysis**: Tailored resume feedback based on job role
-- **ATS Compatibility Scoring**: Checks resume compatibility with ATS systems
-
-## Available Static Courses
-
-StudyMate supports the following course topics with static data for demonstration purposes:
-
-### Network Security
-- **Topics**: Any topic containing "network" will generate Network Security content
-- **Difficulties**: beginner, intermediate, advanced
-- **Example**: "Network Security Fundamentals", "Cyber Network Protection"
-
-### Machine Learning
-- **Topics**: Any topic containing "machine" will generate Machine Learning content
-- **Difficulties**: beginner, intermediate, advanced
-- **Example**: "Machine Learning Basics", "Deep Machine Learning"
-
-### Data Mining
-- **Topics**: Any topic containing "data" will generate Data Mining content
-- **Difficulties**: beginner, intermediate, advanced
-- **Example**: "Data Mining Techniques", "Big Data Analytics"
-
-### Full Stack Development
-- **Topics**: Any topic containing "stack" will generate Full Stack Development content
-- **Difficulties**: beginner, intermediate, advanced
-- **Example**: "Full Stack Web Development", "MERN Stack Development"
-
-## How Gemini API Calls Work
-
-StudyMate uses direct calls to the Gemini API from the frontend:
-
-- All API calls are handled in `src/services/geminiService.ts`
-- Calls are made directly to Google's Generative AI endpoints
-- The application uses the VITE_GEMINI_API_KEY environment variable for authentication
-- A fallback mechanism exists for generating content when API calls fail
-
-## Course Generation Process
-
-The course generation happens in the background:
-
-1. When a user submits a request, it creates an entry in the database with "generating" status
-2. The application shows a progress indicator with an estimated time remaining
-3. Initially, only course notes are generated
-4. Additional content like flashcards, MCQs, and Q&A sections can be generated separately after the course is created
-5. All generation runs in the background, allowing users to navigate away from the page
-
-## Troubleshooting
-
-### API Authentication Issues
-If you see a 403 error related to the Gemini API:
-1. Check that your `VITE_GEMINI_API_KEY` is correctly set in the `.env` file
-2. Make sure your API key is valid and has not expired
-3. Verify that you have enabled the Generative Language API in your Google Cloud Console
-
-### Browser Extension Conflicts
-If you experience message channel errors:
-1. Try disabling browser extensions, especially ad blockers or privacy tools
-2. Refresh the page and try again
-3. If the issue persists in one browser, try another browser
-
-### Supabase Connection Issues
-If you experience issues with Supabase:
-1. Check that your Supabase URL and API key are correctly configured
-2. Ensure your database schema matches the expected structure
-3. Verify that Row Level Security (RLS) policies are correctly set up
+For a deep dive into the logic, see [PROJECT.md](./PROJECT.md).

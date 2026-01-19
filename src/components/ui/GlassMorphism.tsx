@@ -19,9 +19,9 @@ const GlassMorphism = ({
   shadow = true,
 }: GlassMorphismProps) => {
   const intensityClasses = {
-    light: "bg-white/20 dark:bg-black/10 backdrop-blur-sm",
-    medium: "bg-white/30 dark:bg-black/20 backdrop-blur-md",
-    heavy: "bg-white/50 dark:bg-black/30 backdrop-blur-lg",
+    light: "bg-card border-border shadow-sm",
+    medium: "bg-card border-border shadow-md",
+    heavy: "bg-card border-border shadow-lg",
   };
 
   const roundedClasses = {

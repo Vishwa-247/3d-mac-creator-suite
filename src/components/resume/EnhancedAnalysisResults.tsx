@@ -313,8 +313,7 @@ export const EnhancedAnalysisResults: React.FC<EnhancedAnalysisResultsProps> = (
                     <div className="space-y-3 text-sm">
                       <div className="p-3 bg-white dark:bg-green-900/10 rounded border border-green-200">
                         <p className="text-green-800 dark:text-green-300 leading-relaxed">
-                          <strong className="text-green-700">Situation:</strong> During Q2 2023, when the e-commerce platform experienced a 40% increase in traffic, 
-                          <strong className="text-green-700 ml-1">Task:</strong> I was tasked with optimizing the checkout system to handle peak loads. 
+                          <strong className="text-green-700">Situation:</strong> During Q2 2023,                          <strong className="text-green-700 ml-1">Task:</strong> I was tasked with optimizing the checkout system to handle peak loads. 
                           <strong className="text-green-700 ml-1">Action:</strong> I implemented Redis caching, optimized database queries, and introduced load balancing across 5 servers. 
                           <strong className="text-green-700 ml-1">Result:</strong> Reduced checkout time by 65% (from 8s to 2.8s), increased conversion rate by 23%, and handled 50K concurrent users without downtime, generating an additional $2.3M in revenue.
                         </p>

@@ -471,15 +471,17 @@ const FeedbacksList = () => {
                     open={expandedItems[`${feedback.id}-resources`]}
                     onOpenChange={(open) => setExpandedItems({ ...expandedItems, [`${feedback.id}-resources`]: open })}
                   >
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-gradient-to-r from-orange-50 to-orange-100/50 dark:from-orange-950/20 dark:to-orange-900/10 rounded-lg hover:from-orange-100 hover:to-orange-100 dark:hover:from-orange-950/30 dark:hover:to-orange-900/20 transition-colors border border-orange-200 dark:border-orange-800">
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-gradient-to-r from-sky-50 to-indigo-50/50 rounded-lg hover:from-sky-100/50 hover:to-indigo-100/50 transition-colors border border-slate-100">
+
+
                       <div className="flex items-center gap-2">
-                        <BookOpen className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-                        <span className="font-semibold text-sm text-orange-900 dark:text-orange-200">Learning Resources</span>
+                        <BookOpen className="h-4 w-4 text-slate-500" />
+                        <span className="font-semibold text-sm text-slate-700">Learning Resources</span>
                       </div>
                       {expandedItems[`${feedback.id}-resources`] ? (
-                        <ChevronUp className="h-4 w-4 text-orange-600" />
+                        <ChevronUp className="h-4 w-4 text-slate-400" />
                       ) : (
-                        <ChevronDown className="h-4 w-4 text-orange-600" />
+                        <ChevronDown className="h-4 w-4 text-slate-400" />
                       )}
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pt-3 pl-3">
@@ -503,11 +505,11 @@ const FeedbacksList = () => {
                         </Button>
                         <div className="space-y-3">
                           {feedback.ai_suggestions.learning_resources.map((resource, idx) => (
-                            <div key={idx} className="bg-orange-50/50 dark:bg-orange-950/10 p-3 rounded-lg border border-orange-200 dark:border-orange-700">
+                            <div key={idx} className="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
                               <div className="flex items-start gap-2">
-                                <BookOpen className="h-4 w-4 text-orange-600 dark:text-orange-400 flex-shrink-0 mt-1" />
+                                <BookOpen className="h-4 w-4 text-sky-400 flex-shrink-0 mt-1" />
                                 <div className="flex-1">
-                                  <p className="font-semibold text-sm text-orange-900 dark:text-orange-200 mb-1">
+                                  <p className="font-semibold text-sm text-slate-700 mb-1">
                                     {resource.title}
                                   </p>
                                   <p className="text-xs text-muted-foreground mb-2">
@@ -538,12 +540,12 @@ const FeedbacksList = () => {
 
                 {/* Overall Advice */}
                 {feedback.ai_suggestions.overall_advice && (
-                  <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 rounded-lg border-l-4 border-amber-500">
+                  <div className="p-4 bg-gradient-to-r from-[#FBF5D5] to-[#F0EEE9] rounded-lg border-l-4 border-yellow-200">
                     <div className="flex items-start gap-2">
-                      <Target className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                      <Target className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <p className="font-semibold text-sm text-amber-900 dark:text-amber-200">
+                          <p className="font-semibold text-sm text-slate-700">
                             Overall Advice
                           </p>
                           <Button

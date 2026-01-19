@@ -41,6 +41,8 @@ AGENT_SERVICES = {
     "profile-service": os.getenv("PROFILE_SERVICE_URL", "http://localhost:8006"),
     "course-generation": os.getenv("COURSE_GENERATION_URL", "http://localhost:8008"),
     "interview-coach": os.getenv("INTERVIEW_COACH_URL", "http://localhost:8002"),
+    "evaluator": os.getenv("EVALUATOR_URL", "http://localhost:8010"),
+    "orchestrator": os.getenv("ORCHESTRATOR_URL", "http://localhost:8011"),
 }
 
 # JWT Configuration
@@ -447,6 +449,49 @@ async def get_user_resumes(user_id: str):
         response = await client.get(f"{AGENT_SERVICES['resume-analyzer']}/user-resumes/{user_id}")
         return response.json()
 
+
+# ============================================
+# EVALUATOR & ORCHESTRATOR ROUTES (NEW)
+# ============================================
+
+@app.post("/api/evaluate")
+async def api_evaluate(request: Request):
+    """
+    Forward evaluation request to Evaluator service.
+    Dumb proxy - no business logic here.
+    """
+    try:
+        payload = await request.json()
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                f"{AGENT_SERVICES['evaluator']}/evaluate",
+                json=payload
+            )
+            return response.json()
+    except httpx.RequestError as e:
+        logger.error(f"Evaluator service unavailable: {e}")
+        raise HTTPException(status_code=503, detail="Evaluator service unavailable")
+
+
+@app.get("/api/next")
+async def api_next(user_id: str):
+    """
+    Forward routing request to Orchestrator service.
+    Dumb proxy - no business logic here.
+    """
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(
+                f"{AGENT_SERVICES['orchestrator']}/next",
+                params={"user_id": user_id}
+            )
+            return response.json()
+    except httpx.RequestError as e:
+        logger.error(f"Orchestrator service unavailable: {e}")
+        raise HTTPException(status_code=503, detail="Orchestrator service unavailable")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+

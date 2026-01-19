@@ -17,6 +17,8 @@ taskkill /F /FI "WINDOWTITLE eq Course Generation*" 2>nul
 taskkill /F /FI "WINDOWTITLE eq Interview Coach*" 2>nul
 taskkill /F /FI "WINDOWTITLE eq Unified DSA Service*" 2>nul
 taskkill /F /FI "WINDOWTITLE eq Emotion Detection*" 2>nul
+taskkill /F /FI "WINDOWTITLE eq Evaluator*" 2>nul
+taskkill /F /FI "WINDOWTITLE eq Orchestrator*" 2>nul
 
 echo.
 echo 🔨 Cleaning up processes on backend ports...
@@ -30,6 +32,8 @@ for /f "tokens=5" %%a in ('netstat -ano ^| findstr :8004') do taskkill /F /PID %
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :8006') do taskkill /F /PID %%a 2>nul
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :8008') do taskkill /F /PID %%a 2>nul
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5000') do taskkill /F /PID %%a 2>nul
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :8010') do taskkill /F /PID %%a 2>nul
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :8011') do taskkill /F /PID %%a 2>nul
 
 echo.
 echo ✅ All StudyMate backend services stopped!
