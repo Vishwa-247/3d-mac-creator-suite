@@ -92,6 +92,38 @@ export type Database = {
           },
         ]
       }
+      chapter_completion: {
+        Row: {
+          chapter_id: string
+          completed_at: string | null
+          course_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          completed_at?: string | null
+          course_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          completed_at?: string | null
+          course_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_completion_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       code_submissions: {
         Row: {
           attempt_id: string
@@ -149,38 +181,90 @@ export type Database = {
           },
         ]
       }
-      chapter_completion: {
+      course_articles: {
         Row: {
-          id: string
-          user_id: string
+          article_type: string
+          content: string
           course_id: string
-          chapter_id: string
-          completed_at: string
+          created_at: string | null
+          id: string
+          reading_time_minutes: number | null
+          title: string
         }
         Insert: {
-          id?: string
-          user_id: string
+          article_type: string
+          content: string
           course_id: string
-          chapter_id: string
-          completed_at?: string
+          created_at?: string | null
+          id?: string
+          reading_time_minutes?: number | null
+          title: string
         }
         Update: {
-          id?: string
-          user_id?: string
+          article_type?: string
+          content?: string
           course_id?: string
-          chapter_id?: string
-          completed_at?: string
+          created_at?: string | null
+          id?: string
+          reading_time_minutes?: number | null
+          title?: string
         }
         Relationships: [
           {
-            foreignKeyName: "chapter_completion_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "course_articles_course_id_fkey"
+            columns: ["course_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "courses"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      course_audio: {
+        Row: {
+          audio_type: string
+          audio_url: string | null
+          course_id: string
+          created_at: string | null
+          duration_seconds: number | null
+          id: string
+          script: string
+          script_text: string | null
+          transcript: string | null
+          updated_at: string | null
+          voice_id: string | null
+          voice_used: string | null
+        }
+        Insert: {
+          audio_type: string
+          audio_url?: string | null
+          course_id: string
+          created_at?: string | null
+          duration_seconds?: number | null
+          id?: string
+          script: string
+          script_text?: string | null
+          transcript?: string | null
+          updated_at?: string | null
+          voice_id?: string | null
+          voice_used?: string | null
+        }
+        Update: {
+          audio_type?: string
+          audio_url?: string | null
+          course_id?: string
+          created_at?: string | null
+          duration_seconds?: number | null
+          id?: string
+          script?: string
+          script_text?: string | null
+          transcript?: string | null
+          updated_at?: string | null
+          voice_id?: string | null
+          voice_used?: string | null
+        }
+        Relationships: [
           {
-            foreignKeyName: "chapter_completion_course_id_fkey"
+            foreignKeyName: "course_audio_course_id_fkey"
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
@@ -697,15 +781,93 @@ export type Database = {
           },
         ]
       }
+      course_suggestions: {
+        Row: {
+          course_id: string
+          created_at: string | null
+          id: string
+          relevance_score: number | null
+          suggestion_description: string | null
+          suggestion_topic: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string | null
+          id?: string
+          relevance_score?: number | null
+          suggestion_description?: string | null
+          suggestion_topic: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string | null
+          id?: string
+          relevance_score?: number | null
+          suggestion_description?: string | null
+          suggestion_topic?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_suggestions_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      course_word_games: {
+        Row: {
+          course_id: string
+          created_at: string | null
+          definition: string
+          difficulty: string | null
+          id: string
+          incorrect_options: string[]
+          word: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string | null
+          definition: string
+          difficulty?: string | null
+          id?: string
+          incorrect_options: string[]
+          word: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string | null
+          definition?: string
+          difficulty?: string | null
+          id?: string
+          incorrect_options?: string[]
+          word?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_word_games_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
+          articles_generated: boolean | null
+          audio_generated: boolean | null
           completion_time_estimate: number | null
           created_at: string
           custom_prompt: string | null
           difficulty: string
+          games_generated: boolean | null
+          generation_duration_seconds: number | null
           generation_job_id: string | null
           id: string
           include_exam_prep: boolean | null
+          is_oboe_style: boolean | null
           is_public: boolean | null
           progress_percentage: number | null
           purpose: string
@@ -717,13 +879,18 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          articles_generated?: boolean | null
+          audio_generated?: boolean | null
           completion_time_estimate?: number | null
           created_at?: string
           custom_prompt?: string | null
           difficulty: string
+          games_generated?: boolean | null
+          generation_duration_seconds?: number | null
           generation_job_id?: string | null
           id?: string
           include_exam_prep?: boolean | null
+          is_oboe_style?: boolean | null
           is_public?: boolean | null
           progress_percentage?: number | null
           purpose: string
@@ -735,13 +902,18 @@ export type Database = {
           user_id: string
         }
         Update: {
+          articles_generated?: boolean | null
+          audio_generated?: boolean | null
           completion_time_estimate?: number | null
           created_at?: string
           custom_prompt?: string | null
           difficulty?: string
+          games_generated?: boolean | null
+          generation_duration_seconds?: number | null
           generation_job_id?: string | null
           id?: string
           include_exam_prep?: boolean | null
+          is_oboe_style?: boolean | null
           is_public?: boolean | null
           progress_percentage?: number | null
           purpose?: string
@@ -966,6 +1138,36 @@ export type Database = {
           },
         ]
       }
+      interactions: {
+        Row: {
+          id: string
+          module: string
+          question: string | null
+          step_type: string
+          timestamp: string | null
+          user_answer: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          module: string
+          question?: string | null
+          step_type?: string
+          timestamp?: string | null
+          user_answer: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          module?: string
+          question?: string | null
+          step_type?: string
+          timestamp?: string | null
+          user_answer?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       interview_responses: {
         Row: {
           ai_analysis: Json | null
@@ -1158,6 +1360,7 @@ export type Database = {
           line_by_line_analysis: Json | null
           overall_score: number | null
           recommendations: Json | null
+          resume_id: string | null
           star_methodology_score: number | null
           updated_at: string
           user_id: string
@@ -1175,6 +1378,7 @@ export type Database = {
           line_by_line_analysis?: Json | null
           overall_score?: number | null
           recommendations?: Json | null
+          resume_id?: string | null
           star_methodology_score?: number | null
           updated_at?: string
           user_id: string
@@ -1192,6 +1396,7 @@ export type Database = {
           line_by_line_analysis?: Json | null
           overall_score?: number | null
           recommendations?: Json | null
+          resume_id?: string | null
           star_methodology_score?: number | null
           updated_at?: string
           user_id?: string
@@ -1247,6 +1452,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      scores: {
+        Row: {
+          adaptability: number | null
+          clarity: number | null
+          dsa_predict: number | null
+          failure_awareness: number | null
+          id: string
+          module: string
+          timestamp: string | null
+          tradeoffs: number | null
+          user_id: string
+        }
+        Insert: {
+          adaptability?: number | null
+          clarity?: number | null
+          dsa_predict?: number | null
+          failure_awareness?: number | null
+          id?: string
+          module: string
+          timestamp?: string | null
+          tradeoffs?: number | null
+          user_id: string
+        }
+        Update: {
+          adaptability?: number | null
+          clarity?: number | null
+          dsa_predict?: number | null
+          failure_awareness?: number | null
+          id?: string
+          module?: string
+          timestamp?: string | null
+          tradeoffs?: number | null
+          user_id?: string
+        }
+        Relationships: []
       }
       star_examples_reference: {
         Row: {
@@ -1516,6 +1757,7 @@ export type Database = {
         Row: {
           ai_analysis: Json | null
           ai_suggestions: Json | null
+          analysis_count: number | null
           created_at: string
           extracted_text: string | null
           extraction_status: string | null
@@ -1524,6 +1766,8 @@ export type Database = {
           file_type: string | null
           filename: string
           id: string
+          last_analyzed_at: string | null
+          latest_analysis_id: string | null
           processing_status: string | null
           recommendations: string[] | null
           skill_gaps: string[] | null
@@ -1535,6 +1779,7 @@ export type Database = {
         Insert: {
           ai_analysis?: Json | null
           ai_suggestions?: Json | null
+          analysis_count?: number | null
           created_at?: string
           extracted_text?: string | null
           extraction_status?: string | null
@@ -1543,6 +1788,8 @@ export type Database = {
           file_type?: string | null
           filename: string
           id?: string
+          last_analyzed_at?: string | null
+          latest_analysis_id?: string | null
           processing_status?: string | null
           recommendations?: string[] | null
           skill_gaps?: string[] | null
@@ -1554,6 +1801,7 @@ export type Database = {
         Update: {
           ai_analysis?: Json | null
           ai_suggestions?: Json | null
+          analysis_count?: number | null
           created_at?: string
           extracted_text?: string | null
           extraction_status?: string | null
@@ -1562,6 +1810,8 @@ export type Database = {
           file_type?: string | null
           filename?: string
           id?: string
+          last_analyzed_at?: string | null
+          latest_analysis_id?: string | null
           processing_status?: string | null
           recommendations?: string[] | null
           skill_gaps?: string[] | null
@@ -1631,6 +1881,39 @@ export type Database = {
           level?: string
           name?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_state: {
+        Row: {
+          adaptability_avg: number | null
+          clarity_avg: number | null
+          dsa_predict_skill: number | null
+          failure_awareness_avg: number | null
+          last_update: string | null
+          next_module: string | null
+          tradeoff_avg: number | null
+          user_id: string
+        }
+        Insert: {
+          adaptability_avg?: number | null
+          clarity_avg?: number | null
+          dsa_predict_skill?: number | null
+          failure_awareness_avg?: number | null
+          last_update?: string | null
+          next_module?: string | null
+          tradeoff_avg?: number | null
+          user_id: string
+        }
+        Update: {
+          adaptability_avg?: number | null
+          clarity_avg?: number | null
+          dsa_predict_skill?: number | null
+          failure_awareness_avg?: number | null
+          last_update?: string | null
+          next_module?: string | null
+          tradeoff_avg?: number | null
           user_id?: string
         }
         Relationships: []
