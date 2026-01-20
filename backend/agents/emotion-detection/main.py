@@ -54,6 +54,7 @@ MODEL_PATH = MODEL_PATH_ENV if MODEL_PATH_ENV else str(DEFAULT_MODEL_PATH.resolv
 MODEL_TYPE = os.getenv("FER_MODEL_TYPE", "auto").lower()  # auto|full|state_dict|script
 MODEL_ARCH = os.getenv("FER_MODEL_ARCH", "google/vit-base-patch16-224-in21k")  # transformers model name or timm name
 MODEL_NUM_CLASSES = int(os.getenv("FER_NUM_CLASSES", "7"))
+ALLOW_UNSAFE_PICKLE = os.getenv("FER_ALLOW_UNSAFE_PICKLE", "false").lower() in ("1", "true", "yes")
 
 model = None
 
@@ -144,18 +145,13 @@ def _try_load_model(path: str) -> bool:
                     return True
             except Exception:
                 pass
-            # Try full pickled nn.Module next
+            # Try safe weights-only loading first (prevents arbitrary code execution)
             try:
-                full_obj = torch.load(str(p), map_location=torch.device('cpu'), weights_only=False)
-                if isinstance(full_obj, nn.Module):
-                    full_obj.eval()
-                    model = full_obj
-                    MODEL_LOADED = True
-                    logger.info(f"✅ Pickled nn.Module loaded: {p}")
-                    return True
-                # Not a Module, assume state_dict
-                state_dict = full_obj
-                if isinstance(state_dict, dict):
+                obj = torch.load(str(p), map_location=torch.device('cpu'), weights_only=True)
+
+                # Newer PyTorch may return a state_dict directly
+                if isinstance(obj, dict):
+                    state_dict = obj.get('state_dict', obj)
                     backbone = _build_model_for_state_dict()
                     missing, unexpected = backbone.load_state_dict(state_dict, strict=False)
                     if missing:
@@ -165,94 +161,31 @@ def _try_load_model(path: str) -> bool:
                     backbone.eval()
                     model = backbone
                     MODEL_LOADED = True
-                    logger.info(f"✅ State dict loaded into backbone: {p}")
+                    logger.info(f"✅ Weights-only state_dict loaded into backbone: {p}")
                     return True
-            except (AttributeError, RuntimeError, ImportError) as e:
-                error_msg = str(e)
-                if "Can't get attribute" in error_msg or "ViTSdpaAttention" in error_msg:
-                    logger.warning(f"Model has missing class attributes (likely transformers version mismatch). Extracting state_dict...")
-                    # Try to extract state_dict from the pickled file
-                    try:
-                        import pickle
-                        import sys
 
-                        # Create a dummy module for missing classes
-                        class DummyModule:
-                            def __init__(self, *args, **kwargs):
-                                pass
-                        
-                        # Patch sys.modules to handle missing classes
-                        original_import = __import__
-                        def patched_import(name, *args, **kwargs):
-                            if 'ViTSdpaAttention' in name or 'transformers.models.vit.modeling_vit' in name:
-                                return DummyModule()
-                            return original_import(name, *args, **kwargs)
-                        
-                        # Try loading with error handling
-                        try:
-                            with open(str(p), 'rb') as f:
-                                # Load the pickled object
-                                obj = pickle.load(f)
-                            
-                            # Extract state_dict
-                            if hasattr(obj, 'state_dict'):
-                                state_dict = obj.state_dict()
-                                logger.info("✅ Extracted state_dict from model object")
-                            elif isinstance(obj, dict):
-                                if 'state_dict' in obj:
-                                    state_dict = obj['state_dict']
-                                elif any(key.startswith(('vit.', 'model.', 'encoder.', 'classifier.', 'head.')) for key in obj.keys()):
-                                    state_dict = obj
-                                else:
-                                    raise ValueError("Could not identify state_dict in loaded object")
-                            else:
-                                raise ValueError("Loaded object is neither a model nor a state_dict")
-                            
-                            # Load into compatible model
-                            backbone = _build_model_for_state_dict()
-                            
-                            # Handle transformers model structure (may have 'vit.' prefix or be nested)
-                            if hasattr(backbone, 'vit') and any(not k.startswith('vit.') for k in state_dict.keys()):
-                                # Need to add 'vit.' prefix
-                                new_state_dict = {}
-                                for k, v in state_dict.items():
-                                    if k.startswith('classifier.'):
-                                        new_state_dict[k] = v
-                                    else:
-                                        new_state_dict[f'vit.{k}'] = v
-                                state_dict = new_state_dict
-                            elif not hasattr(backbone, 'vit') and any(k.startswith('vit.') for k in state_dict.keys()):
-                                # Need to remove 'vit.' prefix
-                                new_state_dict = {}
-                                for k, v in state_dict.items():
-                                    if k.startswith('vit.'):
-                                        new_state_dict[k[4:]] = v
-                                    else:
-                                        new_state_dict[k] = v
-                                state_dict = new_state_dict
-                            
-                            missing, unexpected = backbone.load_state_dict(state_dict, strict=False)
-                            if missing:
-                                logger.warning(f"State dict missing keys: {list(missing)[:8]} ...")
-                            if unexpected:
-                                logger.warning(f"Unexpected keys in state dict: {list(unexpected)[:8]} ...")
-                            backbone.eval()
-                            model = backbone
-                            MODEL_LOADED = True
-                            logger.info(f"✅ State dict extracted and loaded into compatible model: {p}")
-                            return True
-                        except Exception as e2:
-                            logger.error(f"Failed to extract state_dict: {e2}")
-                            MODEL_LOADED = False
-                            return False
-                    except Exception as e3:
-                        logger.error(f"Failed to extract state_dict with pickle: {e3}")
-                        MODEL_LOADED = False
-                        return False
-                else:
-                    logger.error(f"Auto load failed: {e}")
-                    MODEL_LOADED = False
-                    return False
+                logger.warning("Unexpected object type returned by weights-only load; using mock predictions.")
+                MODEL_LOADED = False
+                return False
+
+            except Exception as e:
+                # If the model is a full pickled module, that path is unsafe. Allow only if explicitly enabled.
+                if ALLOW_UNSAFE_PICKLE:
+                    logger.warning("FER_ALLOW_UNSAFE_PICKLE=true: attempting legacy unsafe torch.load for compatibility")
+                    full_obj = torch.load(str(p), map_location=torch.device('cpu'), weights_only=False)
+                    if isinstance(full_obj, nn.Module):
+                        full_obj.eval()
+                        model = full_obj
+                        MODEL_LOADED = True
+                        logger.info(f"✅ (Unsafe) Pickled nn.Module loaded: {p}")
+                        return True
+
+                    logger.error("Unsafe torch.load did not return an nn.Module; refusing to proceed.")
+
+                logger.error(f"Safe model load failed: {e}. Using mock predictions.")
+                MODEL_LOADED = False
+                return False
+
         else:
             if mtype == "script":
                 scripted = torch.jit.load(str(p), map_location=torch.device('cpu'))
@@ -261,57 +194,28 @@ def _try_load_model(path: str) -> bool:
                 logger.info(f"✅ TorchScript model loaded: {p}")
                 return True
             if mtype == "full":
-                try:
-                    full_obj = torch.load(str(p), map_location=torch.device('cpu'), weights_only=False)
-                    if not isinstance(full_obj, nn.Module):
-                        raise RuntimeError("Provided model is not an nn.Module; set FER_MODEL_TYPE=state_dict if it's a state dict.")
-                    full_obj.eval()
-                    model = full_obj
-                    MODEL_LOADED = True
-                    logger.info(f"✅ Pickled nn.Module loaded: {p}")
-                    return True
-                except (AttributeError, RuntimeError) as e:
-                    if "Can't get attribute" in str(e) or "ViTSdpaAttention" in str(e):
-                        logger.warning(f"Model has missing class attributes. Switching to state_dict extraction...")
-                        # Extract and load as state_dict
-                        import pickle
-                        try:
-                            with open(str(p), 'rb') as f:
-                                obj = pickle.load(f)
-                            if hasattr(obj, 'state_dict'):
-                                state_dict = obj.state_dict()
-                            elif isinstance(obj, dict):
-                                state_dict = obj.get('state_dict', obj)
-                            else:
-                                raise ValueError("Could not extract state_dict")
-                            
-                            backbone = _build_model_for_state_dict()
-                            # Handle transformers model structure
-                            if hasattr(backbone, 'vit') and any(not k.startswith('vit.') for k in state_dict.keys()):
-                                new_state_dict = {}
-                                for k, v in state_dict.items():
-                                    if k.startswith('classifier.'):
-                                        new_state_dict[k] = v
-                                    else:
-                                        new_state_dict[f'vit.{k}'] = v
-                                state_dict = new_state_dict
-                            
-                            missing, unexpected = backbone.load_state_dict(state_dict, strict=False)
-                            if missing:
-                                logger.warning(f"State dict missing keys: {list(missing)[:8]} ...")
-                            if unexpected:
-                                logger.warning(f"Unexpected keys: {list(unexpected)[:8]} ...")
-                            backbone.eval()
-                            model = backbone
-                            MODEL_LOADED = True
-                            logger.info(f"✅ State dict extracted and loaded: {p}")
-                            return True
-                        except Exception as e2:
-                            logger.error(f"Failed to extract state_dict: {e2}")
-                            raise RuntimeError(f"Failed to load model: {e}. Try setting FER_MODEL_TYPE=state_dict in .env")
-                    raise
+                if not ALLOW_UNSAFE_PICKLE:
+                    raise RuntimeError(
+                        "Refusing to load a full pickled model (unsafe). "
+                        "Set FER_MODEL_TYPE=state_dict or FER_MODEL_TYPE=script, "
+                        "or set FER_ALLOW_UNSAFE_PICKLE=true to bypass at your own risk."
+                    )
+
+                full_obj = torch.load(str(p), map_location=torch.device('cpu'), weights_only=False)
+                if not isinstance(full_obj, nn.Module):
+                    raise RuntimeError("Provided model is not an nn.Module; set FER_MODEL_TYPE=state_dict if it's a state dict.")
+                full_obj.eval()
+                model = full_obj
+                MODEL_LOADED = True
+                logger.info(f"✅ (Unsafe) Pickled nn.Module loaded: {p}")
+                return True
+
             if mtype == "state_dict":
-                state_dict = torch.load(str(p), map_location=torch.device('cpu'))
+                state_dict_obj = torch.load(str(p), map_location=torch.device('cpu'), weights_only=True)
+                if not isinstance(state_dict_obj, dict):
+                    raise RuntimeError("weights_only load did not return a state_dict")
+                state_dict = state_dict_obj.get('state_dict', state_dict_obj)
+
                 backbone = _build_model_for_state_dict()
                 missing, unexpected = backbone.load_state_dict(state_dict, strict=False)
                 if missing:
@@ -321,9 +225,9 @@ def _try_load_model(path: str) -> bool:
                 backbone.eval()
                 model = backbone
                 MODEL_LOADED = True
-                logger.info(f"✅ State dict loaded into backbone: {p}")
+                logger.info(f"✅ State dict loaded into backbone (safe): {p}")
                 return True
-        
+
         MODEL_LOADED = False
         return False
     except Exception as e:
