@@ -1,4 +1,5 @@
 import Chatbot from "@/components/Chatbot";
+import OrchestratorCard from "@/components/OrchestratorCard";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -359,6 +360,13 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
+            {/* AI Orchestrator Recommendation - TOP PRIORITY */}
+            {user?.id && (
+              <div className="animate-fade-up">
+                <OrchestratorCard userId={user.id} />
+              </div>
+            )}
+            
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
               <Card>
                 <CardHeader className="pb-2">

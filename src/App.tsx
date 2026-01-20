@@ -18,6 +18,7 @@ import Index from "@/pages/Index";
 import InterviewResult from "@/pages/InterviewResult";
 import MockInterview from "@/pages/MockInterview";
 import NotFound from "@/pages/NotFound";
+import Onboarding from "@/pages/Onboarding";
 import ProfileBuilder from "@/pages/ProfileBuilder";
 import ResumeAnalyzer from "@/pages/ResumeAnalyzer";
 import Settings from "@/pages/Settings";
@@ -42,6 +43,11 @@ const App = () => (
           <div className="min-h-screen bg-background">
             <Routes>
               <Route path="/auth" element={<Auth />} />
+              <Route path="/onboarding" element={
+                <ProtectedRoute skipOnboarding>
+                  <Onboarding />
+                </ProtectedRoute>
+              } />
               <Route path="/" element={<Layout noPadding={true}><Index /></Layout>} />
               
               {/* Course Routes */}
