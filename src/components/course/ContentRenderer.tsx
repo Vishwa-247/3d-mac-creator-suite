@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import DOMPurify from 'dompurify';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Copy, Check, Image as ImageIcon } from 'lucide-react';
@@ -122,12 +123,30 @@ export const ContentRenderer = ({ content }: ContentRendererProps) => {
   }, [content, isHTML]);
   
   if (isHTML) {
-    // Render HTML directly with proper styling
+    const sanitizedHTML = DOMPurify.sanitize(htmlContent, {
+      // Keep a conservative set of tags/attrs since this content can be AI-produced.
+      ALLOWED_TAGS: [
+        'h1','h2','h3','h4','h5','h6',
+        'p','br','hr',
+        'ul','ol','li',
+        'strong','em','b','i',
+        'code','pre',
+        'a',
+        'blockquote',
+        'table','thead','tbody','tr','th','td',
+        'span','div',
+        'img',
+      ],
+      ALLOWED_ATTR: ['href','title','target','rel','class','src','alt'],
+      ALLOW_DATA_ATTR: false,
+    });
+
+    // Render sanitized HTML with proper styling
     return (
       <div
         ref={containerRef}
         className="prose prose-slate max-w-none"
-        dangerouslySetInnerHTML={{ __html: htmlContent }}
+        dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
       />
     );
   }

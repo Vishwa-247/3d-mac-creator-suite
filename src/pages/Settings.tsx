@@ -40,13 +40,14 @@ import { useEffect, useState } from "react";
 interface UserSettings {
   id?: string;
   user_id: string;
-  gemini_api_key?: string;
   preferred_difficulty: string;
   preferred_language: string;
   theme_preference: string;
   created_at?: string;
   updated_at?: string;
 }
+
+const GEMINI_KEY_STORAGE = "user_gemini_api_key";
 
 const Settings = () => {
   const { user } = useAuth();
@@ -58,6 +59,14 @@ const Settings = () => {
   const [tempApiKey, setTempApiKey] = useState("");
 
   useEffect(() => {
+    // Load any locally-stored BYOK key (we do not persist this in the DB).
+    try {
+      const existing = localStorage.getItem(GEMINI_KEY_STORAGE) || "";
+      setTempApiKey(existing);
+    } catch {
+      // ignore
+    }
+
     if (user) {
       fetchUserSettings();
     }
@@ -71,7 +80,9 @@ const Settings = () => {
 
       const { data, error } = await supabase
         .from("user_settings")
-        .select("*")
+        .select(
+          "id,user_id,preferred_difficulty,preferred_language,theme_preference,created_at,updated_at"
+        )
         .eq("user_id", user.id)
         .maybeSingle();
 
@@ -81,7 +92,6 @@ const Settings = () => {
 
       if (data) {
         setSettings(data);
-        setTempApiKey(data.gemini_api_key || "");
       } else {
         // Create default settings
         const defaultSettings: UserSettings = {
@@ -149,7 +159,8 @@ const Settings = () => {
   };
 
   const handleSaveApiKey = async () => {
-    if (!tempApiKey.trim()) {
+    const key = tempApiKey.trim();
+    if (!key) {
       toast({
         title: "Invalid API Key",
         description: "Please enter a valid Gemini API key.",
@@ -158,20 +169,35 @@ const Settings = () => {
       return;
     }
 
-    await updateSettings({ gemini_api_key: tempApiKey.trim() });
+    // Store locally only (not in the DB)
+    try {
+      localStorage.setItem(GEMINI_KEY_STORAGE, key);
+    } catch {
+      // ignore
+    }
+
+    toast({
+      title: "API Key Saved",
+      description: "Saved on this device only.",
+    });
   };
 
   const handleRemoveApiKey = async () => {
-    if (
-      !confirm(
-        "Are you sure you want to remove your Gemini API key? This will disable AI-powered course generation."
-      )
-    ) {
+    if (!confirm("Remove your Gemini API key from this device?")) {
       return;
     }
 
     setTempApiKey("");
-    await updateSettings({ gemini_api_key: null });
+    try {
+      localStorage.removeItem(GEMINI_KEY_STORAGE);
+    } catch {
+      // ignore
+    }
+
+    toast({
+      title: "API Key Removed",
+      description: "Your Gemini API key was removed from this device.",
+    });
   };
 
   if (!user) {
@@ -298,11 +324,8 @@ const Settings = () => {
                     Required for AI-powered course content generation
                   </p>
                 </div>
-                {settings?.gemini_api_key && (
-                  <Badge
-                    variant="secondary"
-                    className="bg-green-100 text-green-800"
-                  >
+                {!!tempApiKey.trim() && (
+                  <Badge variant="secondary">
                     <CheckCircle className="w-3 h-3 mr-1" />
                     Configured
                   </Badge>
@@ -331,19 +354,16 @@ const Settings = () => {
                     )}
                   </button>
                 </div>
-                <Button
-                  onClick={handleSaveApiKey}
-                  disabled={isSaving || !tempApiKey.trim()}
-                >
+                <Button onClick={handleSaveApiKey} disabled={!tempApiKey.trim()}>
                   <Save className="w-4 h-4 mr-2" />
                   Save
                 </Button>
               </div>
 
-              {settings?.gemini_api_key && (
+              {!!tempApiKey.trim() && (
                 <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
                   <span className="text-sm text-muted-foreground">
-                    API key is configured and ready to use
+                    API key is configured on this device
                   </span>
                   <Button
                     variant="destructive"
@@ -358,8 +378,8 @@ const Settings = () => {
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Your API key is stored securely and encrypted. Get your Gemini
-                  API key from{" "}
+                  Your API key is stored on this device only (not in our
+                  database). Get your Gemini API key from{" "}
                   <a
                     href="https://aistudio.google.com/app/apikey"
                     target="_blank"
