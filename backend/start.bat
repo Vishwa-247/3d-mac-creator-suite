@@ -77,7 +77,7 @@ echo    - Interview Coach:     http://localhost:8002
 echo    - Unified DSA Service: http://localhost:8004 (Progress + AI Feedback + Chatbot)
 echo    - Emotion Detection:   http://localhost:5000
 echo    - Evaluator:           http://localhost:8010 (NEW - LLM Scoring)
-echo    - Orchestrator:        http://localhost:8011 (NEW - Rule-based Routing)
+echo    - Orchestrator:        http://localhost:8011 (v1.1 - Rules + Memory System)
 echo.
 echo 📖 API Documentation: http://localhost:8000/docs
 echo.

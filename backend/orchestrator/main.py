@@ -5,7 +5,7 @@ Port: 8011
 Endpoint: GET /next?user_id=UUID
 Returns the next module user should work on based on their weakness scores.
 
-NO LLM CALLS. DETERMINISTIC ROUTING ONLY.
+v1.1: Added memory system for persistent user tracking.
 """
 
 import logging
@@ -19,8 +19,16 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+import sys
+from pathlib import Path
+
+# Add parent directory to path for shared imports
+backend_root = Path(__file__).parent.parent
+sys.path.insert(0, str(backend_root))
+
 from state import fetch_user_state, update_next_module
 from rules import decide, get_module_description
+from shared.memory import UserMemory, create_user_memory
 
 # Load environment variables
 backend_root = Path(__file__).parent.parent
@@ -43,6 +51,17 @@ class NextModuleResponse(BaseModel):
     next_module: str
     reason: str
     description: str = ""
+    memory_context: str = ""  # NEW: summary from memory system
+
+
+class MemoryEventRequest(BaseModel):
+    """Request body for recording memory events."""
+    event_type: str
+    module: str
+    observation: str
+    metric_name: str | None = None
+    metric_value: float | None = None
+    tags: list[str] | None = None
 
 
 class HealthResponse(BaseModel):
@@ -114,9 +133,10 @@ app.add_middleware(
 async def root():
     return {
         "service": "StudyMate Orchestrator",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "port": 8011,
-        "description": "Deterministic rule-based routing engine"
+        "description": "Deterministic rule-based routing engine with memory",
+        "features": ["rules-based routing", "user memory", "pattern detection"]
     }
 
 
@@ -163,14 +183,20 @@ async def get_next_module(user_id: str = Query(..., description="User UUID")):
     next_module, reason = decide(state)
     logger.info(f"Decision for {user_id}: {next_module} ({reason})")
     
-    # Step 3: Update next_module in DB
+    # Step 3: Get memory context (NEW)
+    memory = create_user_memory(user_id, pool)
+    memory_context = await memory.get_weakness_summary()
+    logger.info(f"Memory context for {user_id}: {memory_context[:100]}...")
+    
+    # Step 4: Update next_module in DB
     await update_next_module(pool, user_id, next_module)
     
-    # Step 4: Return result
+    # Step 5: Return result with memory context
     return NextModuleResponse(
         next_module=next_module,
         reason=reason,
-        description=get_module_description(next_module)
+        description=get_module_description(next_module),
+        memory_context=memory_context
     )
 
 
@@ -195,6 +221,86 @@ async def get_state(user_id: str):
         dsa_predict_skill=state.get("dsa_predict_skill", 1.0),
         next_module=state.get("next_module")
     )
+
+
+# ============ Memory Endpoints (NEW) ============
+
+@app.post("/memory/{user_id}/record")
+async def record_memory_event(user_id: str, event: MemoryEventRequest):
+    """
+    Record a memory event for a user.
+    Use this after interviews, course completions, etc.
+    """
+    pool = app.state.pool
+    
+    if not pool:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    memory = create_user_memory(user_id, pool)
+    event_id = await memory.record_event(
+        event_type=event.event_type,
+        module=event.module,
+        observation=event.observation,
+        metric_name=event.metric_name,
+        metric_value=event.metric_value,
+        tags=event.tags
+    )
+    
+    if not event_id:
+        raise HTTPException(status_code=500, detail="Failed to record event")
+    
+    return {"status": "ok", "event_id": event_id}
+
+
+@app.get("/memory/{user_id}")
+async def get_memory_context(user_id: str):
+    """
+    Get memory context for a user.
+    Returns weakness summary, recent events, and patterns.
+    """
+    pool = app.state.pool
+    
+    if not pool:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    memory = create_user_memory(user_id, pool)
+    context = await memory.get_orchestrator_context()
+    
+    return context
+
+
+@app.get("/memory/{user_id}/summary")
+async def get_weakness_summary(user_id: str):
+    """
+    Get text summary of user weaknesses.
+    Useful for LLM context injection.
+    """
+    pool = app.state.pool
+    
+    if not pool:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    memory = create_user_memory(user_id, pool)
+    summary = await memory.get_weakness_summary()
+    
+    return {"user_id": user_id, "summary": summary}
+
+
+@app.post("/memory/{user_id}/update-patterns")
+async def trigger_pattern_update(user_id: str):
+    """
+    Trigger pattern analysis for a user.
+    Call this after recording multiple events.
+    """
+    pool = app.state.pool
+    
+    if not pool:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    memory = create_user_memory(user_id, pool)
+    count = await memory.update_patterns()
+    
+    return {"status": "ok", "patterns_updated": count}
 
 
 # ============ Run Server ============

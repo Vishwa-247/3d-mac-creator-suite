@@ -189,7 +189,7 @@ export default function Auth() {
       </header>
 
       {/* Main Content - Two Column Layout */}
-      <main className="flex-1 flex items-start justify-center p-4 sm:p-6">
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:py-24">
         <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start">
           {/* Left Column - Benefits */}
           <div className="space-y-8 order-2 lg:order-1">
