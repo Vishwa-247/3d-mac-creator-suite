@@ -16,6 +16,7 @@ import DSATopic from "@/pages/DSATopic";
 import FutureIntegrations from "@/pages/FutureIntegrations";
 import Index from "@/pages/Index";
 import InterviewResult from "@/pages/InterviewResult";
+import InterviewJourney from "@/pages/InterviewJourney";
 import MockInterview from "@/pages/MockInterview";
 import NotFound from "@/pages/NotFound";
 import Onboarding from "@/pages/Onboarding";
@@ -117,6 +118,13 @@ const App = () => (
                 <Layout>
                   <ProtectedRoute>
                     <InterviewResult />
+                  </ProtectedRoute>
+                </Layout>
+              } />
+              <Route path="interview-journey" element={
+                <Layout>
+                  <ProtectedRoute>
+                    <InterviewJourney />
                   </ProtectedRoute>
                 </Layout>
               } />

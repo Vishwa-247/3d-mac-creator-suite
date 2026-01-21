@@ -1407,6 +1407,36 @@ export type Database = {
           },
         ]
       }
+      orchestrator_decisions: {
+        Row: {
+          created_at: string
+          depth: number
+          id: string
+          input_snapshot: Json
+          next_module: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          depth?: number
+          id?: string
+          input_snapshot?: Json
+          next_module: string
+          reason: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          depth?: number
+          id?: string
+          input_snapshot?: Json
+          next_module?: string
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profile_analytics: {
         Row: {
           action_type: string
@@ -2042,9 +2072,15 @@ export type Database = {
           clarity_avg: number | null
           dsa_predict_skill: number | null
           failure_awareness_avg: number | null
+          last_interview_overall_score: number | null
+          last_interview_session_id: string | null
+          last_module: string | null
+          last_seen_at: string
           last_update: string | null
           next_module: string | null
+          onboarding_completed: boolean
           tradeoff_avg: number | null
+          updated_at: string
           user_id: string
         }
         Insert: {
@@ -2052,9 +2088,15 @@ export type Database = {
           clarity_avg?: number | null
           dsa_predict_skill?: number | null
           failure_awareness_avg?: number | null
+          last_interview_overall_score?: number | null
+          last_interview_session_id?: string | null
+          last_module?: string | null
+          last_seen_at?: string
           last_update?: string | null
           next_module?: string | null
+          onboarding_completed?: boolean
           tradeoff_avg?: number | null
+          updated_at?: string
           user_id: string
         }
         Update: {
@@ -2062,9 +2104,15 @@ export type Database = {
           clarity_avg?: number | null
           dsa_predict_skill?: number | null
           failure_awareness_avg?: number | null
+          last_interview_overall_score?: number | null
+          last_interview_session_id?: string | null
+          last_module?: string | null
+          last_seen_at?: string
           last_update?: string | null
           next_module?: string | null
+          onboarding_completed?: boolean
           tradeoff_avg?: number | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []

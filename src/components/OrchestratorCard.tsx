@@ -4,11 +4,19 @@
  * Fetches the next module on mount and shows a CTA to navigate.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getNextModule } from "@/lib/api";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { 
   ArrowRight, 
   Bot, 
@@ -31,44 +39,47 @@ const MODULE_CONFIG: Record<string, {
   route: string; 
   icon: React.ComponentType<{ className?: string }>;
   label: string;
-  color: string;
 }> = {
   production_interview: { 
     route: "/mock-interview", 
     icon: Video,
     label: "Mock Interview",
-    color: "text-purple-500"
+  },
+  interview_journey: {
+    route: "/interview-journey",
+    icon: Video,
+    label: "Interview Journey",
+  },
+  onboarding: {
+    route: "/onboarding",
+    icon: Bot,
+    label: "Onboarding",
   },
   interactive_course: { 
     route: "/course-generator", 
     icon: BookOpen,
     label: "Interactive Course",
-    color: "text-blue-500"
   },
   dsa_practice: { 
     route: "/dsa-sheet", 
     icon: Code,
     label: "DSA Practice",
-    color: "text-green-500"
   },
   resume_builder: { 
     route: "/resume-analyzer", 
     icon: FileText,
     label: "Resume Builder",
-    color: "text-orange-500"
   },
   project_studio: { 
     route: "/course-generator", 
     icon: Briefcase,
     label: "Project Studio",
-    color: "text-pink-500"
   },
   // Fallback
   default: { 
     route: "/dashboard", 
     icon: Bot,
     label: "Continue Learning",
-    color: "text-primary"
   },
 };
 
@@ -79,7 +90,11 @@ export default function OrchestratorCard({ userId }: OrchestratorCardProps) {
     next_module: string;
     reason: string;
     description?: string;
+    depth?: number;
   } | null>(null);
+
+  const [decisionLog, setDecisionLog] = useState<any[]>([]);
+  const [logLoading, setLogLoading] = useState(false);
 
   useEffect(() => {
     async function fetchRecommendation() {
@@ -89,7 +104,10 @@ export default function OrchestratorCard({ userId }: OrchestratorCardProps) {
       setError(null);
       
       try {
-        const data = await getNextModule(userId);
+        const { data, error } = await supabase.functions.invoke("orchestrator-next", {
+          body: { user_id: userId },
+        });
+        if (error) throw error;
         setRecommendation(data);
       } catch (err: any) {
         console.error("Failed to fetch orchestrator recommendation:", err);
@@ -107,6 +125,31 @@ export default function OrchestratorCard({ userId }: OrchestratorCardProps) {
     : MODULE_CONFIG.default;
 
   const ModuleIcon = moduleConfig.icon;
+
+  const depthLabel = useMemo(() => {
+    const d = recommendation?.depth ?? 1;
+    return d > 1 ? `Depth ${d}` : "Baseline";
+  }, [recommendation?.depth]);
+
+  const loadDecisionLog = async () => {
+    if (!userId) return;
+    setLogLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("orchestrator_decisions")
+        .select("id, next_module, depth, reason, created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(8);
+      if (error) throw error;
+      setDecisionLog(data || []);
+    } catch (e) {
+      console.error("Failed to load decision log:", e);
+      setDecisionLog([]);
+    } finally {
+      setLogLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -145,8 +188,6 @@ export default function OrchestratorCard({ userId }: OrchestratorCardProps) {
 
   return (
     <Card className="overflow-hidden border-2 border-primary/20 shadow-lg relative">
-      {/* Gradient accent */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-purple-500 to-pink-500" />
       
       <CardHeader className="pb-4">
         <div className="flex items-center gap-3">
@@ -156,7 +197,7 @@ export default function OrchestratorCard({ userId }: OrchestratorCardProps) {
           <div>
             <div className="flex items-center gap-2">
               <CardTitle className="text-lg">AI Recommended Next Step</CardTitle>
-              <Sparkles className="h-4 w-4 text-amber-500" />
+              <Sparkles className="h-4 w-4 text-primary" />
             </div>
             <CardDescription className="text-xs">
               Personalized by your Orchestrator
@@ -170,13 +211,16 @@ export default function OrchestratorCard({ userId }: OrchestratorCardProps) {
           <>
             {/* Module Badge */}
             <div className="flex items-center gap-3 p-4 rounded-xl bg-muted/50 border border-border/50">
-              <div className={`p-3 rounded-lg bg-background shadow-sm ${moduleConfig.color}`}>
+              <div className="p-3 rounded-lg bg-background shadow-sm text-primary">
                 <ModuleIcon className="h-6 w-6" />
               </div>
               <div className="flex-1">
+                <div className="flex items-center justify-between gap-2">
                 <p className="font-semibold text-foreground">
                   {moduleConfig.label}
                 </p>
+                  <span className="text-xs text-muted-foreground">{depthLabel}</span>
+                </div>
                 <p className="text-sm text-muted-foreground line-clamp-2">
                   {recommendation.description || recommendation.reason}
                 </p>
@@ -196,6 +240,48 @@ export default function OrchestratorCard({ userId }: OrchestratorCardProps) {
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button type="button" variant="outline" className="w-full" onClick={loadDecisionLog}>
+                  View decision log
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-xl">
+                <DialogHeader>
+                  <DialogTitle>Orchestrator decision log</DialogTitle>
+                  <DialogDescription>
+                    Audit trail of recent routing decisions for this user.
+                  </DialogDescription>
+                </DialogHeader>
+
+                {logLoading ? (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Loading...
+                  </div>
+                ) : decisionLog.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No decisions yet.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {decisionLog.map((d) => (
+                      <div key={d.id} className="rounded-lg border border-border/60 p-3 bg-muted/20">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-sm font-medium text-foreground">
+                            {MODULE_CONFIG[d.next_module]?.label || d.next_module}
+                          </p>
+                          <p className="text-xs text-muted-foreground">Depth {d.depth}</p>
+                        </div>
+                        <p className="mt-1 text-sm text-muted-foreground">{d.reason}</p>
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          {new Date(d.created_at).toLocaleString()}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
           </>
         )}
       </CardContent>
