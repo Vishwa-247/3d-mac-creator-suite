@@ -79,12 +79,13 @@ echo    - Profile Service:     http://localhost:8006
 echo    - Resume Analyzer:     http://localhost:8003
 echo    - Course Service:      http://localhost:8001
 echo    - Course Generation:   http://localhost:8008
-echo    - Interview Coach:     http://localhost:8002
+echo    - DSA Service:         http://localhost:8002
 echo    - Unified DSA Service: http://localhost:8004 (Progress + AI Feedback + Chatbot)
 echo    - Emotion Detection:   http://localhost:5000
 echo    - Evaluator:           http://localhost:8010 (NEW - LLM Scoring)
 echo    - Orchestrator:        http://localhost:8011 (v1.1 - Rules + Memory System)
 echo    - Project Studio:      http://localhost:8012 (Demo Mock Swarm)
+echo    - Job Search:          http://localhost:8013 (Firecrawl + Groq)
 echo.
 echo 📖 API Documentation: http://localhost:8000/docs
 echo.
